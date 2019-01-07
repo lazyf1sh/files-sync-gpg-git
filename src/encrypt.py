@@ -21,17 +21,17 @@ def executeCommand(command):
         print("Output: \n{}\n".format(proc))
 
 
-def gitcommitAndPush():
+def gitcommitAndPush(targetFolder):
     previous_cwd = os.getcwd()
-    os.chdir("encrypted")
+    os.chdir(targetFolder)
     executeCommand('git add *.gpg')
     executeCommand('git commit -m upd')
     os.chdir(previous_cwd)
 
 
-def encrypt_files(files_enencrypted):
+def encrypt_files(files_enencrypted, srcFolder, targetFolder):
     for file in files_enencrypted:
         if os.path.isfile(file) and not file.lower().endswith('.gpg'):
-                path_unencrypted = os.path.relpath(file)
-                path_encrypted = 'encrypted/' + os.path.relpath(file, 'unencrypted')
-                print(subprocess.check_output(['gpg', '--yes', '--verbose', '--output', path_encrypted + '.gpg', '--encrypt', '--recipient', recipient, path_unencrypted]))
+            srcFolder = srcFolder.replace("**", "")
+            path_encrypted = targetFolder + os.path.relpath(file, srcFolder)
+            print(subprocess.check_output(['gpg', '--yes', '--verbose', '--output', path_encrypted + '.gpg', '--encrypt', '--recipient', recipient, file]))

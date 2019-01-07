@@ -12,24 +12,29 @@ def dictToJson(filename, my_dict):
         json.dump(my_dict, file, indent=4, sort_keys=True)
 
 
-def create_enc_dir_structure(files_enencrypted):
-    if not os.path.exists("encrypted/"):
+def create_targetDir(targetDir):
+    if not os.path.exists(targetDir):
         try:
-            os.makedirs("encrypted/")
+            os.makedirs(targetDir)
         except FileExistsError as e:
             print(e)
 
+
+
+def create_enc_dir_structure(files_enencrypted, srcFolder, targetFolder):
     for file in files_enencrypted:
-        if os.path.isdir(file) and file.find("encrypted/"):
-            path_encrypted = 'encrypted/' + os.path.relpath(file, 'unencrypted')
+        if os.path.isdir(file):
+            srcFolder = srcFolder.replace("**", "")
+            path_encrypted = targetFolder + os.path.relpath(file, srcFolder)
             if path_encrypted.find(".") == 0:
                 continue
             else:
                 if not os.path.exists(path_encrypted):
                     os.makedirs(path_encrypted)
 
-def removeFiles(paths):
+def removeFiles(paths, srcFolder, targetFolder):
     for path in paths:
-        encrypted_path = "encrypted/" + os.path.relpath(path, "unencrypted") + ".gpg"
+        srcFolder = srcFolder.replace("**", "")
+        encrypted_path = targetFolder + os.path.relpath(path, srcFolder) + ".gpg"
         if os.path.exists(encrypted_path) and os.path.isfile(encrypted_path):
             os.remove(encrypted_path)
