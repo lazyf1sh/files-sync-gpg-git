@@ -22,9 +22,11 @@ def executeCommand(command):
 
 
 def gitcommitAndPush():
-    os.chdir('encrypted')
+    previous_cwd = os.getcwd()
+    os.chdir("encrypted")
     executeCommand('git add *.gpg')
     executeCommand('git commit -m upd')
+    os.chdir(previous_cwd)
 
 
 def encrypt_files(files_enencrypted):
@@ -33,13 +35,3 @@ def encrypt_files(files_enencrypted):
                 path_unencrypted = os.path.relpath(file)
                 path_encrypted = 'encrypted/' + os.path.relpath(file, 'unencrypted')
                 print(subprocess.check_output(['gpg', '--yes', '--verbose', '--output', path_encrypted + '.gpg', '--encrypt', '--recipient', recipient, path_unencrypted]))
-
-
-
-
-# fromFileMd5 = readMd5sFromFile()
-# virtualFileMd5 = buildMd5FilesMapVirtual()
-# addMd5sToFile(virtualFileMd5)
-# create_enc_dir_structure()
-# encrypt_files()
-# gitcommitAndPush()
