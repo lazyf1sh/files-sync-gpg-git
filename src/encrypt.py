@@ -8,11 +8,7 @@ import shlex
 import pickle
 import pprint
 
-
-
-toCommit = []
-
-
+recipient = "94B31905EEA476BA62B105D0BBDC9AD25A5BEF95!"
 
 def executeCommand(command):
     args = shlex.split(command)
@@ -31,23 +27,15 @@ def gitcommitAndPush():
     executeCommand('git commit -m upd')
 
 
-def encrypt_files():
+def encrypt_files(files_enencrypted):
     for file in files_enencrypted:
-        path_unencrypted = os.path.relpath(file)
-        path_encrypted = 'encrypted/' + os.path.relpath(file, 'unencrypted')
         if os.path.isfile(file) and not file.lower().endswith('.gpg'):
-            print(subprocess.check_output(['gpg', '--yes', '--verbose', '--output', path_encrypted + '.gpg', '--encrypt', '--recipient', 'stealthwar@gmail.com', path_unencrypted]))
+                path_unencrypted = os.path.relpath(file)
+                path_encrypted = 'encrypted/' + os.path.relpath(file, 'unencrypted')
+                print(subprocess.check_output(['gpg', '--yes', '--verbose', '--output', path_encrypted + '.gpg', '--encrypt', '--recipient', recipient, path_unencrypted]))
 
 
-def create_enc_dir_structure():
-    for file in files_enencrypted:
-        path_encrypted = 'encrypted/' + os.path.relpath(file, 'unencrypted')
-        if os.path.isdir(file) and file.find("encrypted/"):
-            if path_encrypted.find(".") == 0:
-                continue
-            else:
-                if not os.path.exists(path_encrypted):
-                    os.makedirs(path_encrypted)
+
 
 # fromFileMd5 = readMd5sFromFile()
 # virtualFileMd5 = buildMd5FilesMapVirtual()

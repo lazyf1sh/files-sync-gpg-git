@@ -1,0 +1,10 @@
+{
+    "./unencrypted/": "a4f49c43fffb2b7a486c50515918415e",
+    "./unencrypted/1.txt": "995e31bf8a78e7e69fed8be5ad8b6199",
+    "./unencrypted/my file.txt": "b3b287fb2bd6833a689a6ba7702ac2f0",
+    "./unencrypted/my folder": "f99550f32e07fceba787f77d4f85c622",
+    "./unencrypted/my folder/123.txt.gpg": "83eef07dbcbe48fb73cfce1adf1675a4",
+    "./unencrypted/my folder/added dir": "d501d331e59f525452236b2670f6c09e",
+    "./unencrypted/my folder/added file.txt": "d41d8cd98f00b204e9800998ecf8427e",
+    "./unencrypted/my folder/dsadsa dsad as.txt": "d41d8cd98f00b204e9800998ecf8427e"
+}
