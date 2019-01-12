@@ -1,39 +1,21 @@
-import glob
 import sys
-from src import sync
-from src import utils
-from src import encrypt
+from src import decrypt_logic, encrypt_logic, utils
 import configparser
 
 config = configparser.ConfigParser()
 config.read('default.conf')
 
-folder_src = config["default"]["source-dir"]
-folder_target = config["default"]["target-dir"]
+folder_unencrypted = config["default"]["dir-unencrypted"]
+folder_encrypted = config["default"]["dir-encrypted"]
 state_file = "previous_state.json"
 
-files_unencrypted = glob.glob(folder_src, recursive=True)
 
-current_state = sync.build_md5_files_map_virtual(files_unencrypted)
-previous_state = utils.read_json_dict_from_file(state_file)
+if sys.argv[1] == "e" or sys.argv[1] == "enc" or sys.argv[1] == "encrypt":
+    encrypt_logic.encrypt_run(folder_unencrypted, folder_encrypted, state_file)
+    utils.stop_application()
 
-if previous_state == current_state:
-    print("state is not changed")
-    print("end\n")
-    sys.exit(0)
+if sys.argv[1] == "d" or sys.argv[1] == "dec" or sys.argv[1] == "decrypt":
+    decrypt_logic.decrypt_run(folder_encrypted, folder_unencrypted)
+    utils.stop_application()
 
-elements_added = sync.find_added_elements_by_key(current_state, previous_state)
-elements_removed = sync.find_removed_elements_by_key(current_state, previous_state)
-elements_modified = sync.find_modified_files(current_state, previous_state)
-
-utils.create_target_dir(folder_target)
-utils.create_enc_dir_structure(elements_added.keys(), folder_src, folder_target)
-encrypt.encrypt_files(elements_added.keys(), folder_src, folder_target)
-utils.remove_files(elements_removed.keys(), folder_src, folder_target)
-encrypt.encrypt_files(elements_modified.keys(), folder_src, folder_target)
-
-encrypt.git_commit_and_push(folder_target)
-
-utils.dict_to_json(state_file, current_state)
-
-print("end\n")
+print("No args provided. Use 'encrypt' or 'decrypt'.")

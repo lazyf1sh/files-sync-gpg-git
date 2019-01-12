@@ -1,5 +1,11 @@
 import json
 import os
+import sys
+
+
+def stop_application():
+    print("end\n")
+    sys.exit(0)
 
 
 def read_json_dict_from_file(filename):
