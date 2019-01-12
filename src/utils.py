@@ -1,40 +1,41 @@
 import json
 import os
 
-def readJsonDictFromFile(filename):
+
+def read_json_dict_from_file(filename):
     with open(filename, 'r') as fp:
         data = json.load(fp)
         return data
 
 
-def dictToJson(filename, my_dict):
+def dict_to_json(filename, my_dict):
     with open(filename, 'w') as file:
         json.dump(my_dict, file, indent=4, sort_keys=True)
 
 
-def create_targetDir(targetDir):
-    if not os.path.exists(targetDir):
+def create_target_dir(target_dir):
+    if not os.path.exists(target_dir):
         try:
-            os.makedirs(targetDir)
+            os.makedirs(target_dir)
         except FileExistsError as e:
             print(e)
 
 
-
-def create_enc_dir_structure(files_enencrypted, srcFolder, targetFolder):
+def create_enc_dir_structure(files_enencrypted, src_folder, target_folder):
     for file in files_enencrypted:
         if os.path.isdir(file):
-            srcFolder = srcFolder.replace("**", "")
-            path_encrypted = targetFolder + os.path.relpath(file, srcFolder)
+            src_folder = src_folder.replace("**", "")
+            path_encrypted = target_folder + os.path.relpath(file, src_folder)
             if path_encrypted.find(".") == 0:
                 continue
             else:
                 if not os.path.exists(path_encrypted):
                     os.makedirs(path_encrypted)
 
-def removeFiles(paths, srcFolder, targetFolder):
+
+def remove_files(paths, src_folder, target_folder):
     for path in paths:
-        srcFolder = srcFolder.replace("**", "")
-        encrypted_path = targetFolder + os.path.relpath(path, srcFolder) + ".gpg"
+        src_folder = src_folder.replace("**", "")
+        encrypted_path = target_folder + os.path.relpath(path, src_folder) + ".gpg"
         if os.path.exists(encrypted_path) and os.path.isfile(encrypted_path):
             os.remove(encrypted_path)

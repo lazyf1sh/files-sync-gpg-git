@@ -1,10 +1,8 @@
 import glob
 import sys
-import os
-import sync
-import utils
-import encrypt
-import logging
+from src import sync
+from src import utils
+from src import encrypt
 import configparser
 
 config = configparser.ConfigParser()
@@ -12,33 +10,30 @@ config.read('default.conf')
 
 folder_src = config["default"]["source-dir"]
 folder_target = config["default"]["target-dir"]
-state_file = "previous_state.json";
-
+state_file = "previous_state.json"
 
 files_unencrypted = glob.glob(folder_src, recursive=True)
 
-current_state = sync.buildMd5FilesMapVirtual(files_unencrypted)
-previous_state = utils.readJsonDictFromFile(state_file)
+current_state = sync.build_md5_files_map_virtual(files_unencrypted)
+previous_state = utils.read_json_dict_from_file(state_file)
 
 if previous_state == current_state:
     print("state is not changed")
     print("end\n")
     sys.exit(0)
 
-elements_added = sync.findAddedElementsByKey(current_state, previous_state)
-elements_removed = sync.findRemovedElementsByKey(current_state, previous_state)
-elements_modified = sync.findModifiedFiles(current_state, previous_state)
+elements_added = sync.find_added_elements_by_key(current_state, previous_state)
+elements_removed = sync.find_removed_elements_by_key(current_state, previous_state)
+elements_modified = sync.find_modified_files(current_state, previous_state)
 
-
-utils.create_targetDir(folder_target)
+utils.create_target_dir(folder_target)
 utils.create_enc_dir_structure(elements_added.keys(), folder_src, folder_target)
 encrypt.encrypt_files(elements_added.keys(), folder_src, folder_target)
-utils.removeFiles(elements_removed.keys(), folder_src, folder_target)
+utils.remove_files(elements_removed.keys(), folder_src, folder_target)
 encrypt.encrypt_files(elements_modified.keys(), folder_src, folder_target)
 
+encrypt.git_commit_and_push(folder_target)
 
-encrypt.gitcommitAndPush(folder_target)
-
-utils.dictToJson(state_file, current_state)
+utils.dict_to_json(state_file, current_state)
 
 print("end\n")
