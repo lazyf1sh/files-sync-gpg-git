@@ -1,6 +1,6 @@
 import glob
 
-from src import utils, sync, encrypt
+import utils, sync, encrypt
 
 
 def encrypt_run(folder_src, folder_target, state_file):
