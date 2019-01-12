@@ -1,5 +1,5 @@
 import sys
-from src import decrypt_logic, encrypt_logic, utils
+import decrypt_logic, encrypt_logic, utils
 import configparser
 
 config = configparser.ConfigParser()

@@ -1,5 +1,5 @@
 import unittest
-from src import encrypt
+import encrypt
 
 def fun(x):
     return x + 1
