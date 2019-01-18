@@ -2,15 +2,21 @@ import hashlib
 import os
 
 
-def build_md5_files_map_virtual(list_files):
+def build_md5_files_map_virtual(list_files, folder_src):
+    folder_src = folder_src.replace("**", "")
     result = {}
     for file in list_files:
+        file_rel = os.path.relpath(file, folder_src)
+        file_rel = "/" + file_rel.replace("\\", "/")  # windows-specific
+        if file_rel == "/.":
+            continue
         if os.path.isfile(file):
             filemd5 = md5(file)
-            result[file] = filemd5
+            result[file_rel] = filemd5
         if os.path.isdir(file):
-            md5_from_dir_path = md5_from_string(file)
-            result[file] = md5_from_dir_path
+            file_rel = file_rel + "/"
+            md5_from_dir_path = md5_from_string(file_rel)
+            result[file_rel] = md5_from_dir_path
     return result
 
 
