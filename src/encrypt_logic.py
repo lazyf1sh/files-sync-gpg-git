@@ -1,12 +1,12 @@
 import glob
 
-import utils, sync, encrypt
+from src import utils, sync, encrypt
 
 
 def encrypt_run(folder_src, folder_target, state_file):
     files_unencrypted = glob.glob(folder_src, recursive=True)
 
-    current_state = sync.build_md5_files_map_virtual(files_unencrypted)
+    current_state = sync.build_md5_files_map_virtual(files_unencrypted, folder_src)
     previous_state = utils.read_json_dict_from_file(state_file)
 
     if previous_state == current_state:
