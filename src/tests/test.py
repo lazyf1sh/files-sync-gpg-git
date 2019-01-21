@@ -24,4 +24,3 @@ class MyTest2(unittest.TestCase):
                             '/мой каталог/моя заметка.md': '67e6513b2f7ce9bac6bf8f67d8ed732c',
                             '/1.txt':'202cb962ac59075b964b07152d234b70' }
         self.assertDictEqual(result, result_expected)
-        self

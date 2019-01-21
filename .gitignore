@@ -2,3 +2,4 @@
 **/unencrypted/
 **/encrypted/
 **/__pycache__
+venv/
