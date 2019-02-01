@@ -25,8 +25,8 @@ def git_commit_and_push(target_folder):
 
 
 def encrypt_files(list_files, src_folder, target_folder):
-    for file in list_files:
-        if os.path.isfile(file) and not file.lower().endswith('.gpg'):
-            src_folder = src_folder.replace("**", "")
-            path_encrypted = target_folder + os.path.relpath(file, src_folder)
-            print(subprocess.check_output(['gpg', '--yes', '--verbose', '--output', path_encrypted + '.gpg', '--encrypt', '--recipient', recipient, file]))
+    for relPath in list_files:
+        absPath = src_folder.replace("*", "") + relPath
+        if os.path.isfile(absPath) and not absPath.lower().endswith('.gpg'):
+            path_encrypted = target_folder + relPath
+            print(subprocess.check_output(['gpg', '--yes', '--verbose', '--output', path_encrypted + '.gpg', '--encrypt', '--recipient', recipient, absPath]))

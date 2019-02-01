@@ -40,8 +40,8 @@ def create_enc_dir_structure(files_enencrypted, src_folder, target_folder):
 
 
 def remove_files(paths, src_folder, target_folder):
-    for path in paths:
+    for relPath in paths:
         src_folder = src_folder.replace("**", "")
-        encrypted_path = target_folder + os.path.relpath(path, src_folder) + ".gpg"
+        encrypted_path = target_folder + relPath + ".gpg"
         if os.path.exists(encrypted_path) and os.path.isfile(encrypted_path):
             os.remove(encrypted_path)
