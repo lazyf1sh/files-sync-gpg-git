@@ -9,6 +9,7 @@ folder_unencrypted = config["default"]["dir-unencrypted"]
 folder_encrypted = config["default"]["dir-encrypted"]
 state_file = "previous_state.json"
 
+# pull data and rename conflicted files
 
 if sys.argv[1] == "e" or sys.argv[1] == "enc" or sys.argv[1] == "encrypt":
     encrypt_logic.encrypt_run(folder_unencrypted, folder_encrypted, state_file)
