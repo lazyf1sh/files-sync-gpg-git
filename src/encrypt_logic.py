@@ -1,6 +1,6 @@
 import glob
 
-from src import utils, sync, encrypt
+from src import utils, sync, encrypt, git
 
 
 def encrypt_run(folder_src, folder_target, state_file):
@@ -23,6 +23,6 @@ def encrypt_run(folder_src, folder_target, state_file):
     utils.remove_files(elements_removed.keys(), folder_src, folder_target)
     encrypt.encrypt_files(elements_modified.keys(), folder_src, folder_target)
 
-    encrypt.git_commit_and_push(folder_target)
-
     utils.dict_to_json(state_file, current_state)
+    git.git_commit_and_push(folder_target)
+

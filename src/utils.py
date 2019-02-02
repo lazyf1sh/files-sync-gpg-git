@@ -1,7 +1,8 @@
 import json
 import os
 import sys
-
+import shlex
+import subprocess
 
 def stop_application():
     print("end\n")
@@ -27,16 +28,21 @@ def create_target_dir(target_dir):
             print(e)
 
 
+def buildAbsolutePath(relPath, srcFolder):
+    srcFolder = srcFolder.replace("*", "")
+    return srcFolder + "/" + relPath
+
+
 def create_enc_dir_structure(files_enencrypted, src_folder, target_folder):
-    for file in files_enencrypted:
-        if os.path.isdir(file):
-            src_folder = src_folder.replace("**", "")
-            path_encrypted = target_folder + os.path.relpath(file, src_folder)
-            if path_encrypted.find(".") == 0:
+    for relPath in files_enencrypted:
+        absPath = buildAbsolutePath(relPath, src_folder)
+        if os.path.isdir(absPath):
+            absPathOutput = buildAbsolutePath(relPath, target_folder)
+            if absPathOutput.find(".") == 0:
                 continue
             else:
-                if not os.path.exists(path_encrypted):
-                    os.makedirs(path_encrypted)
+                if not os.path.exists(absPathOutput):
+                    os.makedirs(absPathOutput)
 
 
 def remove_files(paths, src_folder, target_folder):
@@ -45,3 +51,13 @@ def remove_files(paths, src_folder, target_folder):
         encrypted_path = target_folder + relPath + ".gpg"
         if os.path.exists(encrypted_path) and os.path.isfile(encrypted_path):
             os.remove(encrypted_path)
+
+def execute_command(command):
+    args = shlex.split(command)
+    try:
+        proc = subprocess.check_output(args)
+    except subprocess.CalledProcessError as exc:
+        print("Status : FAIL", exc.returncode, exc.output)
+        return
+    else:
+        print("Output: \n{}\n".format(proc))
