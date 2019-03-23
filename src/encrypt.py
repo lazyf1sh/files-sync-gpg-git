@@ -1,11 +1,12 @@
+import configparser
 import subprocess
 import os
-
 
 config = configparser.ConfigParser()
 config.read('default.conf')
 
 recipient = config["default"]["gpg-recipient"]
+
 
 def encrypt_files(list_files, src_folder, target_folder):
     for relPath in list_files:

@@ -4,6 +4,7 @@ import sys
 import shlex
 import subprocess
 
+
 def stop_application():
     print("called stop_application\n")
     sys.exit(0)
@@ -54,6 +55,7 @@ def remove_files(paths, src_folder, target_folder):
         encrypted_path = target_folder + relPath + ".gpg"
         if os.path.exists(encrypted_path) and os.path.isfile(encrypted_path):
             os.remove(encrypted_path)
+
 
 def execute_command(command):
     args = shlex.split(command)
