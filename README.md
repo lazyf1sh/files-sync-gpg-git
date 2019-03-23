@@ -1,9 +1,9 @@
-# Current development status: work in progress
+# Current development status: work in progress. Script is unstable.
 
 # Roadmap
-- просмотр истории версий файла
-- просмотр удаленных файлов в репозитории
--
+- viewing file history based on git repo
+- viewing deleted files based on git repo
+- desktop / mobile frontend to prevent having unencrypted the notes at the filesystem. Frontend just runs python script.
 
 # Warning
 Локальные заметки хранятся в незашифрованном виде. Если кто-то получит доступ к вашему устройству, на котором хранятся данные, заметки будут скомпрометированы.
