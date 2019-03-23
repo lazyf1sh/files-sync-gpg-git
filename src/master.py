@@ -1,7 +1,7 @@
-import sys
-from src import decrypt_logic, encrypt_logic, utils, git, sync, conflict_manager, RenameStrategy
 import configparser
 import glob
+
+from src import utils, git, sync
 
 config = configparser.ConfigParser()
 config.read('default.conf')

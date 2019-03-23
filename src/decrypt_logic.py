@@ -1,7 +1,7 @@
 import glob
 import os
 import subprocess
-import time
+
 
 def decrypt_run(folder_encrypted, folder_unencrypted):
     decrypt_dir = folder_unencrypted.replace("**", "") # + "!decrypted-to-merge-" + str(int(time.time())) + "/"
