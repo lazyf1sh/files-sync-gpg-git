@@ -3,3 +3,5 @@
 **/encrypted/
 **/__pycache__
 venv/
+src/state.json
+src/default.conf

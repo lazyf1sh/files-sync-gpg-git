@@ -2,8 +2,17 @@ import hashlib
 import os
 
 
+def removeGpgExtension(list_files):
+    result = {}
+
+    for key, value in list_files.items():
+        newKey = replace_last(key, ".gpg", "")
+        result[newKey] = value
+    return result
+
+
 def build_md5_files_map_virtual(list_files, folder_src):
-    folder_src = folder_src.replace("**", "")
+    folder_src = folder_src.replace("*", "")
     result = {}
     for file in list_files:
         file_rel = os.path.relpath(file, folder_src)
@@ -56,3 +65,7 @@ def md5(fname):
 
 def md5_from_string(string):
     return hashlib.md5(string.encode('utf-8')).hexdigest()
+
+def replace_last(source_string, replace_what, replace_with):
+    head, _sep, tail = source_string.rpartition(replace_what)
+    return head + replace_with + tail

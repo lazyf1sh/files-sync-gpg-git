@@ -17,12 +17,11 @@ def encrypt_run(folder_src, folder_target, state_file):
     elements_removed = sync.find_removed_elements_by_key(current_state, previous_state)
     elements_modified = sync.find_modified_files(current_state, previous_state)
 
-    utils.create_target_dir(folder_target)
+    utils.create_dirs(folder_target)
     utils.create_enc_dir_structure(elements_added.keys(), folder_src, folder_target)
     encrypt.encrypt_files(elements_added.keys(), folder_src, folder_target)
     utils.remove_files(elements_removed.keys(), folder_src, folder_target)
     encrypt.encrypt_files(elements_modified.keys(), folder_src, folder_target)
 
     utils.dict_to_json(state_file, current_state)
-    git.git_commit_and_push(folder_target)
-
+    git.git_commit(folder_target)
