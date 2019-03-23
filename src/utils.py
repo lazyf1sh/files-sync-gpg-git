@@ -5,7 +5,7 @@ import shlex
 import subprocess
 
 def stop_application():
-    print("end\n")
+    print("called stop_application\n")
     sys.exit(0)
 
 
@@ -20,10 +20,13 @@ def dict_to_json(filename, my_dict):
         json.dump(my_dict, file, indent=4, sort_keys=True)
 
 
-def create_target_dir(target_dir):
-    if not os.path.exists(target_dir):
+def create_dirs(dir):
+    if not os.path.exists(dir):
         try:
-            os.makedirs(target_dir)
+            print("creating dir: ", dir)
+            os.makedirs(dir)
+            print("dir created: ", dir)
+            return True
         except FileExistsError as e:
             print(e)
 
@@ -61,3 +64,4 @@ def execute_command(command):
         return
     else:
         print("Output: \n{}\n".format(proc))
+    return format(proc)

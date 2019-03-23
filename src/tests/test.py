@@ -13,7 +13,7 @@ class MyTest2(unittest.TestCase):
         file = glob.glob("test_data/file_for_test_md5", recursive=True)
         self.assertEqual(sync.md5(file[0]), "de9e8b4b671fed9da2518ce488dbc138")
     def test_sync_build_md5_files_map_virtual(self):
-        folder_src = "test_data/example-notes/**"
+        folder_src = "test_data/example-notes01/**"
         list_files = file = glob.glob(folder_src, recursive=True)
         result = sync.build_md5_files_map_virtual(list_files, folder_src)
 
