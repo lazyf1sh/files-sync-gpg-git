@@ -3,6 +3,7 @@ import os
 import glob
 
 
+
 def remove_gpg_ext(list_files):
     result = {}
     for key, value in list_files.items():
