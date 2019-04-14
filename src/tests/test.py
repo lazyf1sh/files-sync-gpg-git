@@ -1,6 +1,6 @@
 import unittest
 import glob
-from src import sync
+from src import sync, conflict_manager
 
 def fun(x):
     return x + 1
@@ -24,3 +24,18 @@ class MyTest2(unittest.TestCase):
                             '/мой каталог/моя заметка.md': '67e6513b2f7ce9bac6bf8f67d8ed732c',
                             '/1.txt':'202cb962ac59075b964b07152d234b70' }
         self.assertDictEqual(result, result_expected)
+
+    def test_sync_build_md5_files_map_virtual(self):
+        folder_remote_previous = "test_data/example-notes02/remote/remote_previous"
+        folder_remote_current = "test_data/example-notes02/remote/remote_current"
+
+        folder_local_previous = "test_data/example-notes02/local/local_previous"
+        folder_local_current = "test_data/example-notes02/local/local_current"
+
+        previous_remote_state = sync.calculate_state_without_gpg_ext(folder_remote_previous)
+        current_remote_state = sync.calculate_state_without_gpg_ext(folder_remote_current)
+
+        current_local_state = sync.calculate_state(folder_local_current)
+        previous_local_state = sync.calculate_state(folder_local_previous)
+
+        conflict_manager.do_resolve(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
