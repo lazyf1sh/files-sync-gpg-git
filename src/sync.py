@@ -50,7 +50,7 @@ def find_diff_by_key(dict1, dict2):
 
 
 def find_modified_files(dict1, dict2):
-    same_names = find_intersection_by_keys(dict1, dict2)  # files that have the same names but may be modified
+    same_names = find_intersection_by_keys(dict1, dict2)  # files that have the same names but may was modified
     same1 = find_intersection_by_keys(dict1, same_names)
     same2 = find_intersection_by_keys(dict2, same_names)
     diff = set(same1.values()) - set(same2.values())
