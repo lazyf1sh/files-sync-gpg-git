@@ -5,3 +5,4 @@
 venv/
 src/state.json
 src/default.conf
+src/1default.conf

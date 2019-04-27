@@ -14,14 +14,16 @@ def calculateMovings(previous_remote_state, current_remote_state, previous_local
     remote_elements_added = sync.find_added_elements_by_key(current_remote_state, previous_remote_state)
     remote_elements_modified = sync.find_modified_files(current_remote_state, previous_remote_state)
     remote_elements_removed = sync.find_removed_elements_by_key(current_remote_state, previous_remote_state)
-    remote_elements_not_modified = {}
+    remote_elements_not_modified = sync.find_not_modified_files(current_remote_state, previous_remote_state)
 
     local_elements_added = sync.find_added_elements_by_key(current_local_state, previous_local_state)
     local_elements_modified = sync.find_modified_files(current_local_state, previous_local_state)
     local_elements_removed = sync.find_removed_elements_by_key(current_local_state, previous_local_state)
-    local_elements_not_modified = {}
+    local_elements_not_modified = sync.find_not_modified_files(current_local_state, previous_local_state)
 
     # operations calculations
 
-    decrypt_to_left_no_conflicts.update(sync.find_added_elements_by_key(remote_elements_added, current_local_state))
+    decrypt_to_left_no_conflicts.update(sync.find_added_elements_by_key(current_remote_state, current_local_state))
     decrypt_to_left_no_conflicts.update(sync.find_added_elements_by_key(remote_elements_modified, current_local_state))
+
+    return decrypt_to_left_no_conflicts
