@@ -26,4 +26,4 @@ current_remote_state = sync.calculate_state_without_gpg_ext(folder_remote)
 current_local_state = sync.calculate_state(folder_local)
 previous_local_state = utils.read_json_dict_from_file(state_file)
 
-conflict_manager.do_resolve(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
+conflict_manager.calculateMovings(previous_remote_state, current_remote_state, previous_local_state, current_local_state)

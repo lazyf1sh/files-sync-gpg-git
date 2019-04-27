@@ -58,6 +58,15 @@ def find_modified_files(dict1, dict2):
     result = {swapped[i]: i for i in diff}
     return result
 
+def find_not_modified_files(dict1, dict2):
+    same_names = find_intersection_by_keys(dict1, dict2)
+    same1 = find_intersection_by_keys(dict1, same_names)
+    same2 = find_intersection_by_keys(dict2, same_names)
+    diff = set(same1.values()).intersection(set(same2.values()))
+    swapped = {v: k for k, v in dict1.items()}
+    result = {swapped[i]: i for i in diff}
+    return result
+
 
 def find_intersection_by_keys(dict1, dict2):
     return {k: dict1[k] for k in set(dict1).intersection(set(dict2))}
