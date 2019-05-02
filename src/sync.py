@@ -1,8 +1,8 @@
 import hashlib
 import os
 import glob
-
-
+import time
+from src import decrypt_routine
 
 def remove_gpg_ext(list_files):
     result = {}
@@ -15,6 +15,15 @@ def remove_gpg_ext(list_files):
 def build_md5_files_map_virtual_remove_gpg_ext(list_files, folder_src):
     list_files = build_md5_files_map_virtual(list_files, folder_src)
     return remove_gpg_ext(list_files)
+
+
+def calculate_state_without_trash_bin(folder_path, folder_trash_bin_path):
+    state = calculate_state(folder_path)
+    result = {}
+    for key, value, in state.items():
+        if folder_trash_bin_path not in key:
+            result[key] = value
+    return result
 
 
 def calculate_state(folder_path):
@@ -58,6 +67,7 @@ def find_modified_files(dict1, dict2):
     result = {swapped[i]: i for i in diff}
     return result
 
+
 def find_not_modified_files(dict1, dict2):
     same_names = find_intersection_by_keys(dict1, dict2)
     same1 = find_intersection_by_keys(dict1, same_names)
@@ -83,10 +93,19 @@ def find_removed_elements_by_key(dict1, dict2):
 def md5(fname):
     hash_md5 = hashlib.md5()
     with open(fname, "rb") as f:
-        for chunk in iter(lambda: f.read(4096), b""):
+        i = iter(lambda: f.read(4096), b"")
+        for chunk in i:
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
+def md5_bytes(bytes):
+    f = io.BytesIO()
+    hash_md5 = hashlib.md5()
+    with open(fname, "rb") as f:
+        i = iter(lambda: f.read(4096), b"")
+        for chunk in i:
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()
 
 def md5_from_string(string):
     return hashlib.md5(string.encode('utf-8')).hexdigest()
@@ -95,3 +114,18 @@ def md5_from_string(string):
 def replace_last(source_string, replace_what, replace_with):
     head, _sep, tail = source_string.rpartition(replace_what)
     return head + replace_with + tail
+
+
+def move_to_trash_bin(relative_paths, base_path):
+    for relative_path in relative_paths:
+        os.rename(base_path + "/" + relative_path, base_path + "__trash_bin" + relative_path + "_" + str(time.time()))
+
+def check_conflict_and_remove_on_right(relative_paths, folder_base_local, folder_base_remote):
+    for relative_path, md5 in relative_paths.items():
+        md5_decrypted = md5
+        encrypted_file_path = folder_base_remote + "/" + relative_path + ".gpg"
+        decrypted_file_contents = decrypt_routine.decrypt_single_file_inmemory_to_str(encrypted_file_path)
+        md5_encrypted = md5_from_string(decrypted_file_contents)
+        if md5_encrypted == md5_decrypted:
+            print('123')
+

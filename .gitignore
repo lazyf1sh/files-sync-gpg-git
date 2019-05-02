@@ -4,3 +4,4 @@
 **/__pycache__
 venv/
 src/state.json
+src/default.conf

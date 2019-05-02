@@ -60,3 +60,9 @@ class RootUnitTest(unittest.TestCase):
         result = sync.find_not_modified_files(local_state_current, local_state_previous)
         result_expected = {'/local_not_modified.txt': '165a5d4656780db9bac7e5d1a6a73db5'}
         self.assertDictEqual(result, result_expected)
+
+    def test_compare_md5(self):
+        file = "test_data/example-notes04/1.txt"
+        md5_file = sync.md5(file)
+        md5_string = sync.md5_from_string("123asd")
+        self.assertEqual(md5_file, md5_string)
