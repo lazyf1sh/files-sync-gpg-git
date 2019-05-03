@@ -45,3 +45,13 @@ def decrypt_single_file_inmemory_to_str(source_path):
         output = subprocess.check_output(['gpg', '--yes', '--verbose', '--decrypt', source_path])
         output = output.decode('UTF-8')
         return output
+
+def decrypt_single_file_inmemory(source_path):
+    """
+    :rtype: str
+    :param source_path: source file path
+    :return: file contents
+    """
+    if os.path.isfile(source_path):
+        output = subprocess.check_output(['gpg', '--yes', '--verbose', '--decrypt', source_path])
+        return output

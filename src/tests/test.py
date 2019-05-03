@@ -66,3 +66,7 @@ class RootUnitTest(unittest.TestCase):
         md5_file = sync.md5(file)
         md5_string = sync.md5_from_string("123asd")
         self.assertEqual(md5_file, md5_string)
+
+    def test_md5_from_bytes(self):
+        bts = bytes([0x13, 0x00, 0x00, 0x00, 0x08, 0x01])
+        bts_md5 = sync.md5_from_bytes(bts)

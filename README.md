@@ -45,3 +45,7 @@
 
 # Точки возникновения конфликтов
 - Склонировал репозиторий, а файл в НЕрепозитории конфликтует с тем что находится в склонированном репозитории
+
+# Programming todos
+- remove leading slash from state tree element
+- get rid of gpg extension in remote repo
