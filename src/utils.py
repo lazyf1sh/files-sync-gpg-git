@@ -64,11 +64,13 @@ def execute_command(command):
     args = shlex.split(command)
     try:
         proc = subprocess.check_output(args)
+        return format(proc)
     except subprocess.CalledProcessError as exc:
         print("Status : FAIL", exc.returncode, exc.output)
         raise CommandExecutionException
     else:
         print("Output: \n{}\n".format(proc))
+        return format(proc)
 
 def getCurrentTs():
     return str(time.time()).split('.')[0]

@@ -27,7 +27,7 @@ previous_local_state = utils.read_json_dict_from_file(state_file)
 
 if current_remote_state == previous_remote_state and current_local_state == previous_local_state:
     print("state is not changed")
-    # utils.stop_application()
+    utils.stop_application()
 
 # calculate operations
 group_1 = conflict_manager.group_1(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
@@ -36,12 +36,19 @@ group_3 = conflict_manager.group_3(previous_remote_state, current_remote_state, 
 group_5 = conflict_manager.group_5(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
 group_6 = conflict_manager.group_6(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
 
+
+
 # execute operations
-sync.handle_group_3(group_3, folder_local, folder_remote) #
-sync.handle_group_6(group_6, folder_local, folder_remote) #
-sync.handle_group_5(group_5, folder_local, folder_remote) #
+sync.handle_group_3(group_3, folder_local, folder_remote) # remote deletion
 sync.handle_group_2_4(group_2_4, folder_local, folder_remote) # local deletion
-sync.handle_group_1(group_1, folder_local, folder_remote) # current state
+sync.handle_group_6(group_6, folder_local, folder_remote) # not existed local
+sync.handle_group_5(group_5, folder_local, folder_remote) # not existed remote
+sync.handle_group_1(group_1, folder_local, folder_remote) # checking conflicts through existing files. place for optimizations
 
 utils.dict_to_json(state_file, current_local_state)
-git.git_commit(folder_remote)
+status_string = git.git_status(folder_remote)
+if "nothing to commit" not in status_string:
+    git.git_commit_gpg_files(folder_remote)
+    git.git_push(folder_remote)
+else:
+    print(status_string)
