@@ -33,6 +33,8 @@ def decrypt_single_file(source_path, target_path):
             print(output)
         except subprocess.CalledProcessError as e:
             print("error decrypting " + source_path + " " + str(e.output))
+    else:
+        print(source_path + " - is not a file")
 
 
 def decrypt_single_file_inmemory_to_str(source_path):

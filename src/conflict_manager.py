@@ -56,15 +56,14 @@ def group_3(previous_remote_state, current_remote_state, previous_local_state, c
 
 def group_5(previous_remote_state, current_remote_state, previous_local_state, current_local_state):
     result = sync.find_added_elements_by_key(current_local_state, previous_remote_state)
-
+    result = sync.find_added_elements_by_key(result, current_remote_state) # to ensure
     return result
 
 
 def group_6(previous_remote_state, current_remote_state, previous_local_state, current_local_state):
     result = sync.find_added_elements_by_key(current_remote_state, previous_local_state)
+    result = sync.find_added_elements_by_key(result, current_local_state) # to ensure
 
-
-    sync.find_added_elements_by_key(current_local_state, result)
     return result
 
 
