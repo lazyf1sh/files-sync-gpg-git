@@ -2,7 +2,8 @@ import hashlib
 import os
 import glob
 import time
-from src import decrypt_routine
+import io
+from src import decrypt_routine, encrypt, utils
 
 def remove_gpg_ext(list_files):
     result = {}
@@ -15,15 +16,6 @@ def remove_gpg_ext(list_files):
 def build_md5_files_map_virtual_remove_gpg_ext(list_files, folder_src):
     list_files = build_md5_files_map_virtual(list_files, folder_src)
     return remove_gpg_ext(list_files)
-
-
-def calculate_state_without_trash_bin(folder_path, folder_trash_bin_path):
-    state = calculate_state(folder_path)
-    result = {}
-    for key, value, in state.items():
-        if folder_trash_bin_path not in key:
-            result[key] = value
-    return result
 
 
 def calculate_state(folder_path):
@@ -98,13 +90,13 @@ def md5(fname):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
-def md5_bytes(bytes):
-    f = io.BytesIO()
+def md5_from_bytes(bytes):
+    f = io.BytesIO(bytes)
     hash_md5 = hashlib.md5()
-    with open(fname, "rb") as f:
-        i = iter(lambda: f.read(4096), b"")
-        for chunk in i:
-            hash_md5.update(chunk)
+
+    i = iter(lambda: f.read(4096), b"")
+    for chunk in i:
+        hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
 def md5_from_string(string):
@@ -116,16 +108,59 @@ def replace_last(source_string, replace_what, replace_with):
     return head + replace_with + tail
 
 
-def move_to_trash_bin(relative_paths, base_path):
-    for relative_path in relative_paths:
-        os.rename(base_path + "/" + relative_path, base_path + "__trash_bin" + relative_path + "_" + str(time.time()))
+def write_bytes_to_file(bytes, output_path):
+    f = open(output_path, 'wb')
+    f.write(bytes)
+    f.close()
 
-def check_conflict_and_remove_on_right(relative_paths, folder_base_local, folder_base_remote):
+
+def handle_group_1(relative_paths, folder_base_local, folder_base_remote):
     for relative_path, md5 in relative_paths.items():
+        relative_path = relative_path.lstrip("/")
+        md5_decrypted = md5
+        uncrypted_file_path = folder_base_local + "/" + relative_path
+        encrypted_file_path = folder_base_remote + "/" + relative_path + ".gpg"
+        decrypted_file_contents = decrypt_routine.decrypt_single_file_inmemory(encrypted_file_path)
+        md5_encrypted = md5_from_bytes(decrypted_file_contents)
+        if md5_encrypted != md5_decrypted:
+            current_ts = utils.getCurrentTs()
+            write_bytes_to_file(decrypted_file_contents, folder_base_local + "/" + current_ts + "_" + relative_path)
+            os.rename(folder_base_remote + "/" + relative_path + ".gpg", folder_base_remote + "/" + current_ts + "_" + relative_path + ".gpg")
+            encrypt.encrypt_single_file(uncrypted_file_path, encrypted_file_path)
+        else:
+            print("files are the same")
+
+def handle_group_3(relative_paths, folder_base_local, folder_base_remote):
+    for relative_path, md5 in relative_paths.items():
+        relative_path = relative_path.lstrip("/")
+        uncrypted_file_path = folder_base_local + "/" + relative_path
+        uncrypted_file_path_renamed = folder_base_local + "/" + "DELETED_" + relative_path
+        os.rename(uncrypted_file_path, uncrypted_file_path_renamed)
+
+
+def handle_group_6(relative_paths, folder_base_local, folder_base_remote):
+    for relative_path, md5 in relative_paths.items():
+        uncrypted_file_path = folder_base_local + "/" + relative_path
+        encrypted_file_path = folder_base_remote + "/" + relative_path + ".gpg"
+        decrypt_routine.decrypt_single_file(encrypted_file_path, uncrypted_file_path)
+
+def handle_group_5(relative_paths, folder_base_local, folder_base_remote):
+    for relative_path, md5 in relative_paths.items():
+        uncrypted_file_path = folder_base_local + "/" + relative_path
+        encrypted_file_path = folder_base_remote + "/" + relative_path + ".gpg"
+        encrypt.encrypt_single_file(uncrypted_file_path, encrypted_file_path)
+
+def handle_group_2_4(relative_paths, folder_base_local, folder_base_remote):
+    for relative_path, md5 in relative_paths.items():
+        relative_path = relative_path.lstrip("/")
         md5_decrypted = md5
         encrypted_file_path = folder_base_remote + "/" + relative_path + ".gpg"
-        decrypted_file_contents = decrypt_routine.decrypt_single_file_inmemory_to_str(encrypted_file_path)
-        md5_encrypted = md5_from_string(decrypted_file_contents)
+        decrypted_file_contents = decrypt_routine.decrypt_single_file_inmemory(encrypted_file_path)
+        md5_encrypted = md5_from_bytes(decrypted_file_contents)
         if md5_encrypted == md5_decrypted:
-            print('123')
-
+            os.remove(encrypted_file_path)
+        else:
+            print("writing conflicted file to local folder")
+            current_ts = utils.getCurrentTs()
+            write_bytes_to_file(decrypted_file_contents, folder_base_local + "/" + current_ts + "_" + relative_path)
+            os.rename(folder_base_remote + "/" + relative_path + ".gpg", folder_base_remote + "/" + current_ts + "_" + relative_path + ".gpg")

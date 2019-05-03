@@ -3,6 +3,7 @@ import os
 import sys
 import shlex
 import subprocess
+import time
 
 from src import CommandExecutionException
 
@@ -68,3 +69,6 @@ def execute_command(command):
         raise CommandExecutionException
     else:
         print("Output: \n{}\n".format(proc))
+
+def getCurrentTs():
+    return str(time.time()).split('.')[0]

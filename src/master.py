@@ -9,10 +9,8 @@ folder_local = config["default"]["dir-unencrypted"]
 folder_remote = config["default"]["dir-encrypted"]
 git_repo_url = config["default"]["git-repo-url"]
 state_file = "state.json"
-folder_trash_bin = "__trash_bin"
 
 utils.create_dirs(folder_local)
-utils.create_dirs(folder_local + "/" + folder_trash_bin)
 repo_just_initialized = utils.create_dirs(folder_remote)
 previous_remote_state = sync.calculate_state_without_gpg_ext(folder_remote)
 
@@ -24,18 +22,26 @@ else:
 
 current_remote_state = sync.calculate_state_without_gpg_ext(folder_remote)
 
-current_local_state = sync.calculate_state_without_trash_bin(folder_local, folder_trash_bin)
+current_local_state = sync.calculate_state(folder_local)
 previous_local_state = utils.read_json_dict_from_file(state_file)
 
+if current_remote_state == previous_remote_state and current_local_state == previous_local_state:
+    print("state is not changed")
+    # utils.stop_application()
+
 # calculate operations
-
-decrypt_to_left_no_conflicts = conflict_manager.decrypt_to_left_no_conflicts(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
-on_left_to_trash_bin = conflict_manager.on_left_to_trash_bin(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
-on_right_remove = conflict_manager.on_right_remove(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
-
+group_1 = conflict_manager.group_1(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
+group_2_4 = conflict_manager.group_2_4(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
+group_3 = conflict_manager.group_3(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
+group_5 = conflict_manager.group_5(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
+group_6 = conflict_manager.group_6(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
 
 # execute operations
+sync.handle_group_3(group_3, folder_local, folder_remote) #
+sync.handle_group_6(group_6, folder_local, folder_remote) #
+sync.handle_group_5(group_5, folder_local, folder_remote) #
+sync.handle_group_2_4(group_2_4, folder_local, folder_remote) # local deletion
+sync.handle_group_1(group_1, folder_local, folder_remote) # current state
 
-sync.check_conflict_and_remove_on_right(on_right_remove, folder_local, folder_remote)
-decrypt_routine.decrypt_gpged_files(decrypt_to_left_no_conflicts, folder_local, folder_remote)
-sync.move_to_trash_bin(on_left_to_trash_bin, folder_local)
+utils.dict_to_json(state_file, current_local_state)
+git.git_commit(folder_remote)
