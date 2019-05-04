@@ -1,6 +1,6 @@
 import configparser
 
-from src import utils, git, sync, conflict_manager, decrypt_routine
+from src import utils, git, sync, operations_calculator, executor_folders, executor_files
 
 config = configparser.ConfigParser()
 config.read('default.conf')
@@ -30,25 +30,35 @@ if current_remote_state == previous_remote_state and current_local_state == prev
     utils.stop_application()
 
 # calculate operations
-group_1 = conflict_manager.group_1(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
-group_2_4 = conflict_manager.group_2_4(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
-group_3 = conflict_manager.group_3(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
-group_5 = conflict_manager.group_5(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
-group_6 = conflict_manager.group_6(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
+group_1 = operations_calculator.group_1(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
+group_2_4 = operations_calculator.group_2_4(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
+group_3 = operations_calculator.group_3(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
+group_5 = operations_calculator.group_5(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
+group_6 = operations_calculator.group_6(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
+group_7 = operations_calculator.group_7(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
+group_8 = operations_calculator.group_8(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
 
 
+# execute operations for folders
+executor_folders.handle_group_5_folders(group_5, folder_local, folder_remote)
+executor_folders.handle_group_6_folders(group_6, folder_local, folder_remote)
 
-# execute operations
-sync.handle_group_3(group_3, folder_local, folder_remote) # remote deletion
-sync.handle_group_2_4(group_2_4, folder_local, folder_remote) # local deletion
-sync.handle_group_6(group_6, folder_local, folder_remote) # not existed local
-sync.handle_group_5(group_5, folder_local, folder_remote) # not existed remote
-sync.handle_group_1(group_1, folder_local, folder_remote) # checking conflicts through existing files. place for optimizations
+# execute operations for files
+executor_files.handle_group_3(group_3, folder_local, folder_remote) # remote deletion
+executor_files.handle_group_2_4(group_2_4, folder_local, folder_remote) # local deletion
+executor_files.handle_group_6(group_6, folder_local, folder_remote) # not existed local
+executor_files.handle_group_5(group_5, folder_local, folder_remote) # not existed remote
+executor_files.handle_group_1(group_1, folder_local, folder_remote) # checking conflicts through existing files. place for optimizations
+executor_files.handle_group_7(group_7, folder_local, folder_remote) # modified local, not modified remote
+executor_files.handle_group_8(group_8, folder_local, folder_remote) # modified remote, not modified local
 
-utils.dict_to_json(state_file, current_local_state)
+# execute operations for folders
+
 status_string = git.git_status(folder_remote)
 if "nothing to commit" not in status_string:
     git.git_commit_gpg_files(folder_remote)
     git.git_push(folder_remote)
 else:
     print(status_string)
+
+sync.dump_current_state(folder_local, state_file)

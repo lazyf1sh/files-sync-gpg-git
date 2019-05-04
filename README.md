@@ -1,3 +1,8 @@
+# System requirements
+- Python installed
+- git installed
+- gpg installed
+
 # Current development status: work in progress. Script is unstable.
 
 # Roadmap
@@ -14,14 +19,16 @@
 
 # Как работает
 - Первичная синхронизация выполняется, если отсутствует каталог .git в remote директории
-- 
+- File id - it's path
+- No dates are used to resolve conflicts
+- Only file content and it's versions is used to resolve conflicts:wq
 
 # Ограничения
 - Звёздочки в именах файлах не поддерживаются и будут убраны
 
 # Roadmap
 - [] Скрипт автоматически синхронизирует заметки.
-- [+] Коммитятся только измененные файлы.
+- [+] Files that have different contents only are objects to operations
 - [] Синхронизация двустороняя - локальные заметки закачиваются в репозиторий, репозиторные заметки скачиваются в локальные
 - [] Программа выполняется если установлена версия git не ниже той что была у меня на момент разработки
 - [] Программа выполняется если установлена версия gpg не ниже той что была у меня на момент разработки
@@ -34,9 +41,10 @@
 
 
 # Конфликтующие заметки
-- Conflict resolve strategy: конфликтующая заметка переименовывается и коммитятся обе заметки
+- Conflict resolve strategy: conflicted note from remote repo is renamed, copied to local catalog. Then both files are commited.
 - Конфликт заметок сведен к минимуму, поскольку коммитятся только измененные файлы.
 - Конфликтующий локальный файл переименовывается в имя_CURRENT_TIMESTAMP
+- Conflicting file / folder with the same names: handled by 
 
 # Шифрование
 - шифрование выполнено путем делегирования задачи команде gpg 
