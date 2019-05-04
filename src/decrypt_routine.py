@@ -48,6 +48,7 @@ def decrypt_single_file_inmemory_to_str(source_path):
         output = output.decode('UTF-8')
         return output
 
+
 def decrypt_single_file_inmemory(source_path):
     """
     :rtype: str

@@ -9,7 +9,7 @@ class RootUnitTest(unittest.TestCase):
 
     def test_sync_md5(self):
         file = glob.glob("test_data/file_for_test_md5", recursive=True)
-        self.assertEqual(sync.md5(file[0]), "de9e8b4b671fed9da2518ce488dbc138")
+        self.assertEqual(utils.md5(file[0]), "de9e8b4b671fed9da2518ce488dbc138")
 
     def test_sync_build_md5_files_map_virtual(self):
         folder_src = "test_data/example-notes01/**"
@@ -63,10 +63,10 @@ class RootUnitTest(unittest.TestCase):
 
     def test_compare_md5(self):
         file = "test_data/example-notes04/1.txt"
-        md5_file = sync.md5(file)
-        md5_string = sync.md5_from_string("123asd")
+        md5_file = utils.md5(file)
+        md5_string = utils.md5_from_string("123asd")
         self.assertEqual(md5_file, md5_string)
 
     def test_md5_from_bytes(self):
         bts = bytes([0x13, 0x00, 0x00, 0x00, 0x08, 0x01])
-        bts_md5 = sync.md5_from_bytes(bts)
+        bts_md5 = utils.md5_from_bytes(bts)

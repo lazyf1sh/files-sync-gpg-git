@@ -1,3 +1,5 @@
+import hashlib
+import io
 import json
 import os
 import sys
@@ -25,6 +27,10 @@ def dict_to_json(filename, my_dict):
 
 
 def create_dirs(catalog_path):
+    """
+
+    :rtype: object
+    """
     if not os.path.exists(catalog_path):
         try:
             print("creating dir: ", catalog_path)
@@ -33,6 +39,10 @@ def create_dirs(catalog_path):
             return True
         except FileExistsError as e:
             print(e)
+            return False
+    else:
+        print(catalog_path + " is alread exists.")
+        return False
 
 
 def build_absolute_path(rel_path, folder_path):
@@ -60,17 +70,49 @@ def remove_files(paths, src_folder, target_folder):
             os.remove(encrypted_path)
 
 
-def execute_command(command):
+def execute_command(command, working_dir):
+    previous_working_dir = os.getcwd()
+    os.chdir(working_dir)
     args = shlex.split(command)
     try:
         proc = subprocess.check_output(args)
+        print("Output: \n{}\n".format(proc))
         return format(proc)
     except subprocess.CalledProcessError as exc:
         print("Status : FAIL", exc.returncode, exc.output)
         raise CommandExecutionException
-    else:
-        print("Output: \n{}\n".format(proc))
-        return format(proc)
+    finally:
+        os.chdir(previous_working_dir)
 
-def getCurrentTs():
+
+def get_current_unix_ts():
     return str(time.time()).split('.')[0]
+
+
+def write_bytes_to_file(byte_arr, output_path):
+    f = open(output_path, 'wb')
+    f.write(byte_arr)
+    f.close()
+
+
+def md5(fname):
+    hash_md5 = hashlib.md5()
+    with open(fname, "rb") as f:
+        i = iter(lambda: f.read(4096), b"")
+        for chunk in i:
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()
+
+
+def md5_from_bytes(bytes):
+    f = io.BytesIO(bytes)
+    hash_md5 = hashlib.md5()
+
+    i = iter(lambda: f.read(4096), b"")
+    for chunk in i:
+        hash_md5.update(chunk)
+    return hash_md5.hexdigest()
+
+
+def md5_from_string(string):
+    return hashlib.md5(string.encode('utf-8')).hexdigest()
