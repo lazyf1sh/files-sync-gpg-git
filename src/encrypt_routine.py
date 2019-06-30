@@ -10,6 +10,7 @@ recipient = config["default"]["gpg-recipient"]
 
 def encrypt_single_file(src_path, target_path):
     if os.path.isfile(src_path):
-        print(subprocess.check_output(['gpg', '--yes', '--verbose', '--output', target_path, '--encrypt', '--recipient', recipient, src_path]))
+        output = subprocess.check_output(['gpg', '--yes', '--verbose', '--output', target_path, '--encrypt', '--recipient', recipient, src_path])
+        print(output)
     else:
         print(src_path + " - is not a file")

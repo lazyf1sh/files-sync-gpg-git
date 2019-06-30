@@ -61,4 +61,4 @@ if "nothing to commit" not in status_string:
 else:
     print(status_string)
 
-sync.dump_current_state(folder_local, state_file)
+sync.save_current_state(folder_local, state_file)
