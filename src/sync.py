@@ -86,7 +86,7 @@ def replace_last(source_string, replace_what, replace_with):
     return head + replace_with + tail
 
 
-def dump_current_state(folder_local, state_file):
+def save_current_state(folder_local, state_file):
     current_local_state = calculate_state(folder_local)
     utils.dict_to_json(state_file, current_local_state)
 
