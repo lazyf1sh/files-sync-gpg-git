@@ -1,6 +1,6 @@
 import unittest
 import glob
-from src import sync, conflict_manager
+from src import sync, utils
 
 
 class RootUnitTest(unittest.TestCase):
@@ -24,21 +24,6 @@ class RootUnitTest(unittest.TestCase):
                            '/1.txt': '202cb962ac59075b964b07152d234b70'}
         self.assertDictEqual(result, result_expected)
 
-    def test_ewqudjsadlkaslkdjaslda(self):
-        folder_remote_previous = "test_data/example-notes02/remote/remote_previous"
-        folder_remote_current = "test_data/example-notes02/remote/remote_current"
-
-        folder_local_previous = "test_data/example-notes02/local/local_previous"
-        folder_local_current = "test_data/example-notes02/local/local_current"
-
-        previous_remote_state = sync.calculate_state_without_gpg_ext(folder_remote_previous)
-        current_remote_state = sync.calculate_state_without_gpg_ext(folder_remote_current)
-
-        current_local_state = sync.calculate_state(folder_local_current)
-        previous_local_state = sync.calculate_state(folder_local_previous)
-
-        conflict_manager.calculateMovings(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
-
     def test_find_modified_files(self):
         folder_local_previous = "test_data/example-notes03/local/local_previous"
         folder_local_current = "test_data/example-notes03/local/local_current"
@@ -47,7 +32,7 @@ class RootUnitTest(unittest.TestCase):
         local_state_previous = sync.calculate_state(folder_local_previous)
 
         result = sync.find_modified_files(local_state_current, local_state_previous)
-        result_expected = {'/local_modified.txt': '28b4c6c4bceb2ad7aa666b9d90143198'}
+        result_expected = {'/local_modified2.txt': 'fc3972bc227d5542bfb378840cc617a1', '/local_modified1.txt': 'fc3972bc227d5542bfb378840cc617a1'}
         self.assertDictEqual(result, result_expected)
 
     def test_find_not_modified_files(self):
@@ -58,7 +43,7 @@ class RootUnitTest(unittest.TestCase):
         local_state_previous = sync.calculate_state(folder_local_previous)
 
         result = sync.find_not_modified_files(local_state_current, local_state_previous)
-        result_expected = {'/local_not_modified.txt': '165a5d4656780db9bac7e5d1a6a73db5'}
+        result_expected = {'/local_not_modified1.txt': '165a5d4656780db9bac7e5d1a6a73db5', '/local_not_modified2.txt': '165a5d4656780db9bac7e5d1a6a73db5'}
         self.assertDictEqual(result, result_expected)
 
     def test_compare_md5(self):
