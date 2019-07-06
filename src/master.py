@@ -26,7 +26,7 @@ current_local_state = sync.calculate_state(folder_local)
 previous_local_state = utils.read_json_dict_from_file(state_file)
 
 if current_remote_state == previous_remote_state and current_local_state == previous_local_state:
-    print("state is not changed")
+    print("state is not changed")  # if program is interrupted before commit to remote repo, next sync goes here
     utils.stop_application()
 
 # calculate operations
@@ -38,19 +38,18 @@ group_6 = operations_calculator.group_6(previous_remote_state, current_remote_st
 group_7 = operations_calculator.group_7(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
 group_8 = operations_calculator.group_8(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
 
-
 # execute operations for folders
 executor_folders.handle_group_5_folders(group_5, folder_local, folder_remote)
 executor_folders.handle_group_6_folders(group_6, folder_local, folder_remote)
 
 # execute operations for files
-executor_files.handle_group_3(group_3, folder_local, folder_remote) # remote deletion
-executor_files.handle_group_2_4(group_2_4, folder_local, folder_remote) # local deletion
-executor_files.handle_group_6(group_6, folder_local, folder_remote) # not existed local
-executor_files.handle_group_5(group_5, folder_local, folder_remote) # not existed remote
-executor_files.handle_group_1(group_1, folder_local, folder_remote) # checking conflicts through existing files. place for optimizations
-executor_files.handle_group_7(group_7, folder_local, folder_remote) # modified local, not modified remote
-executor_files.handle_group_8(group_8, folder_local, folder_remote) # modified remote, not modified local
+executor_files.handle_group_3(group_3, folder_local, folder_remote)  # remote deletion
+executor_files.handle_group_2_4(group_2_4, folder_local, folder_remote)  # local deletion
+executor_files.handle_group_6(group_6, folder_local, folder_remote)  # not existed local
+executor_files.handle_group_5(group_5, folder_local, folder_remote)  # not existed remote
+executor_files.handle_group_1(group_1, folder_local, folder_remote)  # checking conflicts through existing files. place for optimizations
+executor_files.handle_group_7(group_7, folder_local, folder_remote)  # modified local, not modified remote
+executor_files.handle_group_8(group_8, folder_local, folder_remote)  # modified remote, not modified local
 
 # execute operations for folders
 
@@ -61,4 +60,4 @@ if "nothing to commit" not in status_string:
 else:
     print(status_string)
 
-sync.save_current_state(folder_local, state_file)
+sync.save_current_state(state_file, current_local_state)

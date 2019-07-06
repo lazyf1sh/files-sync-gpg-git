@@ -1,0 +1,2 @@
+local_modified.txt
+NEW CONTENT
