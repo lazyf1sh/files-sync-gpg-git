@@ -1,6 +1,7 @@
+import configparser
 import unittest
 import glob
-from src import sync, utils
+from src import sync, utils, git
 
 
 class RootUnitTest(unittest.TestCase):
@@ -9,7 +10,22 @@ class RootUnitTest(unittest.TestCase):
 
     def test_sync_md5(self):
         file = glob.glob("test_data/file_for_test_md5", recursive=True)
+
+        data_bytes = None
+        with open('test_data/file_for_test_md5', 'rb') as myfile:
+            data_bytes = myfile.read()
+        md5_from_bytes = utils.md5_from_bytes(data_bytes)
+
+        data_str = None
+        with open('test_data/file_for_test_md5', 'r') as myfile:
+            data_str = myfile.read()
+        md5_from_string = utils.md5_from_string(data_str)
+
         self.assertEqual(utils.md5(file[0]), "de9e8b4b671fed9da2518ce488dbc138")
+        self.assertEqual(md5_from_string, "de9e8b4b671fed9da2518ce488dbc138")
+        self.assertEqual(md5_from_bytes, "de9e8b4b671fed9da2518ce488dbc138")
+
+
 
     def test_sync_build_md5_files_map_virtual(self):
         folder_src = "test_data/example-notes01/**"
@@ -55,3 +71,10 @@ class RootUnitTest(unittest.TestCase):
     def test_md5_from_bytes(self):
         bts = bytes([0x13, 0x00, 0x00, 0x00, 0x08, 0x01])
         bts_md5 = utils.md5_from_bytes(bts)
+
+    def test_git_file_history(self):
+        config = configparser.ConfigParser()
+        config.read('../default.conf')
+
+        folder_remote = config["default"]["dir-encrypted"]
+        git.git_file_pre_deleted_state_commit_hash(folder_remote, "1.txt.gpg")
