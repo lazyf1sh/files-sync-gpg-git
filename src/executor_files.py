@@ -1,6 +1,6 @@
 import os
 
-from src import decrypt_routine, encrypt_routine, utils
+from src import decrypt_routine, encrypt_routine, utils, git
 
 
 def handle_group_7(relative_paths, folder_base_local, folder_base_remote):
@@ -52,12 +52,20 @@ def handle_group_1(relative_paths, folder_base_local, folder_base_remote):
 def handle_group_3(relative_paths, folder_base_local, folder_base_remote):
     for relative_path, md5 in relative_paths.items():
         relative_path = relative_path.lstrip("/")
-        unencrypted_file_path = folder_base_local + "/" + relative_path
-        if os.path.isfile(unencrypted_file_path):
-            unencrypted_file_path_renamed = folder_base_local + "/" + utils.get_current_unix_ts() + "_" + relative_path
-            os.rename(unencrypted_file_path, unencrypted_file_path_renamed)
+        path_unencrypted = folder_base_local + "/" + relative_path
+        path_encrypted_relative = relative_path + ".gpg"
+        if os.path.isfile(path_unencrypted):
+            deleted_file_contents = git.git_get_recent_file_contents(folder_base_remote, path_encrypted_relative)
+            md5_deleted_file = utils.md5_from_bytes(deleted_file_contents)
+            md5_existing_file = utils.md5(path_unencrypted)
+            if md5_deleted_file == md5_existing_file:
+                print("removing " + path_unencrypted)
+                os.remove(path_unencrypted)
+            else:
+                unencrypted_file_path_renamed = folder_base_local + "/" + utils.get_current_unix_ts() + "_" + relative_path
+                os.rename(path_unencrypted, unencrypted_file_path_renamed)
         else:
-            print("path is not a file: " + unencrypted_file_path)
+            print("path is not a file: " + path_unencrypted)
 
 
 def handle_group_6(relative_paths, folder_base_local, folder_base_remote):

@@ -1,26 +1,60 @@
+import io
+import os
+import sys
+
 from src import utils
 
 
-def git_status(target_folder):
-    result = utils.execute_command('git status', target_folder)
+def git_status(repo_folder):
+    result = utils.execute_command_string('git status', repo_folder)
     return result
 
 
-def git_commit_gpg_files(target_folder):
-    utils.execute_command('git add .', target_folder)
-    utils.execute_command('git commit -m "commited by script"', target_folder)
+def git_commit_gpg_files(repo_folder):
+    utils.execute_command_string('git add .', repo_folder)
+    utils.execute_command_string('git commit -m "committed by script"', repo_folder)
 
 
-def git_clone(target_folder, git_init_url):
+def git_clone(repo_folder, git_init_url):
     print("Cloning existing repo.")
-    utils.execute_command('git clone ' + git_init_url + " .", target_folder)
+    utils.execute_command_string('git clone ' + git_init_url + " .", repo_folder)
 
 
 def git_pull(repo_folder):
-    utils.execute_command("git pull", repo_folder)
+    utils.execute_command_string("git pull", repo_folder)
 
 
 def git_push(repo_folder):
     print("push the data to the repository.")
-    utils.execute_command("git push", repo_folder)
+    utils.execute_command_string("git push", repo_folder)
     print("pushed the data from repository.")
+
+
+def git_file_pre_deleted_state_commit_hash(repo_folder, path):
+    history = utils.execute_command_args(['git', 'log', '-p', '--', path], repo_folder)
+    lines = history.split("\n")
+    commit_hash = None
+    for line in lines:
+        if line.startswith("commit"):
+            commit_hash = line.split(" ")[1]
+        if line.startswith("index"):
+            if "0000000" not in line.split("..")[1]:
+                return commit_hash
+    print(history)
+    return None
+
+
+def git_get_recent_file_contents(repo_folder, path) -> bytes:
+    """
+    Returns previous not deleted file contents
+    :param repo_folder:
+    :param path:
+    """
+    commit_hash = git_file_pre_deleted_state_commit_hash(repo_folder, path)
+    if "win" in sys.platform:
+        cmd = os.environ.get('COMSPEC', 'cmd')
+        command = [cmd, '/c', 'git', 'show', commit_hash + ":" + path, '|gpg', '--decrypt']
+        file_contents = utils.execute_command_args_bytes(command, repo_folder)
+        return file_contents
+    else:
+        raise NotImplementedError

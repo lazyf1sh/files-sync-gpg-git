@@ -70,19 +70,47 @@ def remove_files(paths, src_folder, target_folder):
             os.remove(encrypted_path)
 
 
-def execute_command(command, working_dir):
+def execute_command_args_bytes(args, working_dir):
+    return execute_command_internal(args, working_dir)
+
+
+def execute_command_internal(args, working_dir):
+    """
+
+    :param args:
+    :param working_dir:
+    :return: bytes
+    """
     previous_working_dir = os.getcwd()
     os.chdir(working_dir)
-    args = shlex.split(command)
     try:
         proc = subprocess.check_output(args)
         print("Output: \n{}\n".format(proc))
-        return format(proc)
+        return proc
     except subprocess.CalledProcessError as exc:
         print("Status : FAIL", exc.returncode, exc.output)
         raise CommandExecutionException
     finally:
         os.chdir(previous_working_dir)
+
+
+def execute_command_args(args, working_dir) -> str:
+    bytes1 = execute_command_internal(args, working_dir)
+    try:
+        return bytes1.decode("UTF-8")
+    except Exception as e:
+        print(e)
+        return str(bytes1)
+
+
+def execute_command_string(command, working_dir) -> str:
+    args = shlex.split(command, posix="win" not in sys.platform)
+    bytes1 = execute_command_internal(args, working_dir)
+    try:
+        return bytes1.decode("UTF-8")
+    except Exception as e:
+        print(e)
+        return str(bytes1)
 
 
 def get_current_unix_ts():
