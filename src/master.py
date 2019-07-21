@@ -52,6 +52,7 @@ executor_files.handle_group_7(group_7, folder_local, folder_remote)  # modified 
 executor_files.handle_group_8(group_8, folder_local, folder_remote)  # modified remote, not modified local
 
 # execute operations for folders
+executor_folders.handle_group_2_4_folder(group_2_4, folder_local, folder_remote)
 
 status_string = git.git_status(folder_remote)
 if "nothing to commit" not in status_string:

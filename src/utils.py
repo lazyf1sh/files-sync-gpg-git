@@ -2,10 +2,12 @@ import hashlib
 import io
 import json
 import os
+import shutil
 import sys
 import shlex
 import subprocess
 import time
+import ntpath
 
 from src import CommandExecutionException
 
@@ -26,6 +28,16 @@ def dict_to_json(filename, my_dict):
         json.dump(my_dict, file, indent=4, sort_keys=True)
 
 
+def remove_dirs(dir_path):
+    if os.path.exists(dir_path) and os.path.isdir(dir_path):
+        if not os.listdir(dir_path):
+            shutil.rmtree(dir_path)
+        else:
+            print("Directory is not empty: " + dir_path)
+    else:
+        print("Given Directory don't exists: " + dir_path)
+
+
 def create_dirs(catalog_path):
     """
 
@@ -41,7 +53,7 @@ def create_dirs(catalog_path):
             print(e)
             return False
     else:
-        print(catalog_path + " is alread exists.")
+        print(catalog_path + " is already exists.")
         return False
 
 
@@ -60,6 +72,22 @@ def create_enc_dir_structure(files_enencrypted, src_folder, target_folder):
             else:
                 if not os.path.exists(abs_output_path):
                     os.makedirs(abs_output_path)
+
+
+def calc_path_leaf(path):
+    head, tail = ntpath.split(path)
+    return tail or ntpath.basename(head)
+
+
+def calc_path_head(path):
+    head, tail = ntpath.split(path)
+    return head
+
+
+def append_ts_to_path(path, current_ts):
+    leaf = calc_path_leaf(path)
+    head = calc_path_head(path)
+    return head + "/" + current_ts + "_" + leaf
 
 
 def remove_files(paths, src_folder, target_folder):
