@@ -1,4 +1,5 @@
 import configparser
+import ntpath
 import unittest
 import glob
 from src import sync, utils, git
@@ -78,3 +79,15 @@ class RootUnitTest(unittest.TestCase):
 
         folder_remote = config["default"]["dir-encrypted"]
         git.git_file_pre_deleted_state_commit_hash(folder_remote, "1.txt.gpg")
+
+    def test_path_leaf(self):
+        paths = ['a/b/c/', 'a/b/c', '\\a\\b\\c', '\\a\\b\\c\\', 'a\\b\\c', 'a/b/../../a/b/c/', 'a/b/../../a/b/c', 'C:\\1\\1563602959_3/c', 'C:\\1\\1563602959_3/c/']
+        for path in paths:
+            leaf = utils.calc_path_leaf(path)
+            self.assertEqual(leaf, 'c')
+
+    def test_append_ts_to_path(self):
+        current_ts = utils.get_current_unix_ts()
+        paths = ['a/b/c/', 'a/b/c', '\\a\\b\\c', '\\a\\b\\c\\', 'a\\b\\c', 'a/b/../../a/b/c/', 'a/b/../../a/b/c', 'C:\\1\\1563602959_3/c', 'C:\\1\\1563602959_3/c/']
+        for path in paths:
+            leaf = utils.append_ts_to_path(path, current_ts)
