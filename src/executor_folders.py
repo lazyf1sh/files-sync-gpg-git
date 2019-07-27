@@ -22,7 +22,8 @@ def handle_group_6_folders(relative_paths, folder_base_local, folder_base_remote
 
 
 def handle_group_2_4_folder(relative_paths, folder_base_local, folder_base_remote):
-    for relative_path, md5 in relative_paths.items():
+    sorted_list = sorted(relative_paths, reverse=True)
+    for relative_path in sorted_list:
         repo_folder_path = folder_base_remote + "/" + relative_path
         if os.path.isdir(repo_folder_path):
             utils.remove_dirs(repo_folder_path)
