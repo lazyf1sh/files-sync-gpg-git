@@ -30,7 +30,7 @@ current_local_state = sync.calculate_state(folder_local)
 previous_local_state = utils.read_json_dict_from_file(state_file)
 
 if current_remote_state == previous_remote_state and current_local_state == previous_local_state:
-    logger.info("state is not changed")  # if program is interrupted before commit to remote repo, next sync goes here
+    logger.info("states are the same")
     utils.stop_application()
 
 # calculate operations
@@ -43,8 +43,9 @@ group_7 = operations_calculator.group_7(previous_remote_state, current_remote_st
 group_8 = operations_calculator.group_8(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
 
 # execute operations for folders
-executor_folders.handle_group_5_folders(group_5, folder_local, folder_remote)
-executor_folders.handle_group_6_folders(group_6, folder_local, folder_remote)
+executor_folders.create_remote_dirs(group_5, folder_local, folder_remote)
+executor_folders.create_remote_dirs(group_1, folder_local, folder_remote)
+executor_folders.create_local_dirs(group_6, folder_local, folder_remote)
 
 # execute operations for files
 executor_files.handle_group_3(group_3, folder_local, folder_remote)  # remote deletion
@@ -56,7 +57,8 @@ executor_files.handle_group_7(group_7, folder_local, folder_remote)  # modified 
 executor_files.handle_group_8(group_8, folder_local, folder_remote)  # modified remote, not modified local
 
 # execute operations for folders
-executor_folders.handle_group_2_4_folder(group_2_4, folder_local, folder_remote)
+executor_folders.remove_remote_dirs(group_2_4, folder_remote)
+executor_folders.remove_remote_dirs(group_3, folder_remote)
 
 status_string = git.git_status(folder_remote)
 if "nothing to commit" not in status_string:

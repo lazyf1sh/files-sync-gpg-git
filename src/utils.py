@@ -37,9 +37,10 @@ def remove_dirs(dir_path):
         if not os.listdir(dir_path):
             shutil.rmtree(dir_path)
         else:
-            logger.info("Directory is not empty: " + dir_path)
+            logger.critical("Directory is not empty: %s", dir_path)
+            raise Exception("Dir is not empty")
     else:
-        logger.info("Given Directory don't exists: " + dir_path)
+        logger.info("Given Directory don't exists: %s", dir_path)
 
 
 def create_dirs(catalog_path):
@@ -49,15 +50,15 @@ def create_dirs(catalog_path):
     """
     if not os.path.exists(catalog_path):
         try:
-            logger.info("creating dir: ", catalog_path)
+            logger.debug("creating dir: ", catalog_path)
             os.makedirs(catalog_path)
-            logger.info("dir created: ", catalog_path)
+            logger.debug("dir created: ", catalog_path)
             return True
         except FileExistsError as e:
-            logger.critical(e)
+            logger.info(e)
             return False
     else:
-        logger.info(catalog_path + " is already exists.")
+        logger.debug("Catalog already exists: %s", catalog_path)
         return False
 
 
@@ -117,7 +118,7 @@ def execute_command_internal(args, working_dir):
     os.chdir(working_dir)
     try:
         proc = subprocess.check_output(args)
-        logger.info("Output: \n{}\n".format(proc))
+        logger.debug("Output: \n{}\n".format(proc))
         return proc
     except subprocess.CalledProcessError as exc:
         logger.critical("Status : FAIL", exc.returncode, exc.output)
@@ -136,13 +137,14 @@ def execute_command_args(args, working_dir) -> str:
 
 
 def execute_command_string(command, working_dir) -> str:
+    logging.debug("executing command: %s", command)
     args = shlex.split(command, posix="win" not in sys.platform)
     bytes1 = execute_command_internal(args, working_dir)
     try:
         return bytes1.decode("UTF-8")
     except Exception as e:
-        logger.warning(e)
-        return str(bytes1)
+        logger.critical(e)
+        raise Exception("Error executing command")
 
 
 def get_current_unix_ts():
@@ -155,17 +157,17 @@ def write_bytes_to_file(byte_arr, output_path):
     f.close()
 
 
-def md5(fname):
+def md5(file_path):
     hash_md5 = hashlib.md5()
-    with open(fname, "rb") as f:
+    with open(file_path, "rb") as f:
         i = iter(lambda: f.read(4096), b"")
         for chunk in i:
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
 
-def md5_from_bytes(bytes):
-    f = io.BytesIO(bytes)
+def md5_from_bytes(my_bytes):
+    f = io.BytesIO(my_bytes)
     hash_md5 = hashlib.md5()
 
     i = iter(lambda: f.read(4096), b"")
