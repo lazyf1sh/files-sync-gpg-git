@@ -79,6 +79,7 @@ def group_1(previous_remote_state, current_remote_state, previous_local_state, c
     remote_elements_added = sync.find_added_elements_by_key(current_remote_state, previous_remote_state)
     remote_elements_modified = sync.find_modified_files(current_remote_state, previous_remote_state)
     remote_elements_not_modified = sync.find_not_modified_files(current_remote_state, previous_remote_state)
+    remote_elements_removed = sync.find_removed_elements_by_key(current_remote_state, previous_remote_state)
 
     local_elements_added = sync.find_added_elements_by_key(current_local_state, previous_local_state)
     local_elements_modified = sync.find_modified_files(current_local_state, previous_local_state)
@@ -95,13 +96,25 @@ def group_1(previous_remote_state, current_remote_state, previous_local_state, c
     result.update(sync.find_intersection_by_keys(local_elements_added, remote_elements_modified))
     result.update(sync.find_intersection_by_keys(local_elements_added, remote_elements_not_modified))
 
-    # result = sync.find_intersection_by_keys(current_local_state, current_remote_state)
+    result.update(sync.find_intersection_by_keys(remote_elements_removed, local_elements_added))
+
     return result
 
 
 def group_3(previous_remote_state, current_remote_state, previous_local_state, current_local_state):
     remote_elements_removed = sync.find_removed_elements_by_key(current_remote_state, previous_remote_state)
-    result = sync.find_intersection_by_keys(remote_elements_removed, current_local_state)
+
+    remote_elements_added = sync.find_added_elements_by_key(current_remote_state, previous_remote_state)
+    remote_elements_modified = sync.find_modified_files(current_remote_state, previous_remote_state)
+    remote_elements_not_modified = sync.find_not_modified_files(current_remote_state, previous_remote_state)
+
+    local_elements_added = sync.find_added_elements_by_key(current_local_state, previous_local_state)
+    local_elements_modified = sync.find_modified_files(current_local_state, previous_local_state)
+    local_elements_not_modified = sync.find_not_modified_files(current_local_state, previous_local_state)
+
+    result = {}
+    result.update(sync.find_intersection_by_keys(remote_elements_removed, local_elements_modified))
+    result.update(sync.find_intersection_by_keys(remote_elements_removed, local_elements_not_modified))
 
     return result
 

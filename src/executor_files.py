@@ -6,6 +6,7 @@ from src import decrypt_routine, encrypt_routine, utils, git
 logging.config.fileConfig('logging.conf')
 logger = logging.getLogger(__name__)
 
+
 def handle_group_7(relative_paths, folder_base_local, folder_base_remote):
     for relative_path, md5 in relative_paths.items():
         relative_path = relative_path.lstrip("/")
@@ -16,7 +17,7 @@ def handle_group_7(relative_paths, folder_base_local, folder_base_remote):
         md5_encrypted = utils.md5_from_bytes(decrypted_file_contents)
         if os.path.isfile(unencrypted_file_path):
             if md5_encrypted != md5_decrypted:
-                encrypt_routine.encrypt_single_file(unencrypted_file_path, encrypted_file_path)
+                encrypt_routine.encrypt_single_file(unencrypted_file_path, encrypted_file_path, folder_base_remote)
         else:
             logger.info("path is not a file: ", unencrypted_file_path)
 
@@ -47,7 +48,7 @@ def handle_group_1(relative_paths, folder_base_local, folder_base_remote):
             current_ts = utils.get_current_unix_ts()
             utils.write_bytes_to_file(decrypted_file_contents, utils.append_ts_to_path(unencrypted_file_path, current_ts))
             os.rename(encrypted_file_path, utils.append_ts_to_path(encrypted_file_path, current_ts))
-            encrypt_routine.encrypt_single_file(unencrypted_file_path, encrypted_file_path)
+            encrypt_routine.encrypt_single_file(unencrypted_file_path, encrypted_file_path, folder_base_remote)
         else:
             logger.info("files are the same")
 
@@ -86,9 +87,9 @@ def handle_group_5(relative_paths, folder_base_local, folder_base_remote):
         unencrypted_file_path = folder_base_local + "/" + relative_path
         encrypted_file_path = folder_base_remote + "/" + relative_path + ".gpg"
         if os.path.isfile(unencrypted_file_path):
-            encrypt_routine.encrypt_single_file(unencrypted_file_path, encrypted_file_path)
+            encrypt_routine.encrypt_single_file(unencrypted_file_path, encrypted_file_path, folder_base_remote)
         else:
-            logger.info("path is not a file: " + unencrypted_file_path)
+            logger.debug("path is not a file: " + unencrypted_file_path)
 
 
 def handle_group_2_4(relative_paths, folder_base_local, folder_base_remote):

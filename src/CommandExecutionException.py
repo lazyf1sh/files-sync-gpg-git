@@ -1,2 +1,2 @@
-class CommandExecutionException(Exception):
+class CommandExecutionException(BaseException):
     pass

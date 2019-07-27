@@ -25,14 +25,14 @@ def git_clone(repo_folder, git_init_url):
 
 
 def git_pull(repo_folder):
-    logger.info("executing pull")
+    logger.debug("executing pull")
     utils.execute_command_string("git pull", repo_folder)
-
+    logger.debug("executed pull")
 
 def git_push(repo_folder):
-    logger.info("push the data to the repository.")
+    logger.debug("pushing the data to the remote")
     utils.execute_command_string("git push", repo_folder)
-    logger.info("pushed the data from repository.")
+    logger.debug("pushed the data from repository")
 
 
 def git_file_pre_deleted_state_commit_hash(repo_folder, path):
