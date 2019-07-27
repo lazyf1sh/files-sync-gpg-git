@@ -1,6 +1,10 @@
 import configparser
+import logging.config
 
 from src import utils, git, sync, operations_calculator, executor_folders, executor_files
+
+logging.config.fileConfig('logging.conf')
+logger = logging.getLogger(__name__)
 
 config = configparser.ConfigParser()
 config.read('default.conf')
@@ -15,7 +19,7 @@ repo_just_initialized = utils.create_dirs(folder_remote)
 previous_remote_state = sync.calculate_state_without_gpg_ext(folder_remote)
 
 if repo_just_initialized:
-    print("Created new repository dir.")
+    logger.info("Created new repository dir.")
     git.git_clone(folder_remote, git_repo_url)
 else:
     git.git_pull(folder_remote)
@@ -26,7 +30,7 @@ current_local_state = sync.calculate_state(folder_local)
 previous_local_state = utils.read_json_dict_from_file(state_file)
 
 if current_remote_state == previous_remote_state and current_local_state == previous_local_state:
-    print("state is not changed")  # if program is interrupted before commit to remote repo, next sync goes here
+    logger.info("state is not changed")  # if program is interrupted before commit to remote repo, next sync goes here
     utils.stop_application()
 
 # calculate operations
@@ -59,6 +63,6 @@ if "nothing to commit" not in status_string:
     git.git_commit_gpg_files(folder_remote)
     git.git_push(folder_remote)
 else:
-    print(status_string)
+    logger.info(status_string)
 
 sync.save_current_state(state_file, current_local_state)
