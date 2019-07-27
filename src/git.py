@@ -1,8 +1,12 @@
 import io
+import logging
 import os
 import sys
 
 from src import utils
+
+logging.config.fileConfig('logging.conf')
+logger = logging.getLogger(__name__)
 
 
 def git_status(repo_folder):
@@ -16,18 +20,19 @@ def git_commit_gpg_files(repo_folder):
 
 
 def git_clone(repo_folder, git_init_url):
-    print("Cloning existing repo.")
+    logger.info("Cloning existing repo.")
     utils.execute_command_string('git clone ' + git_init_url + " .", repo_folder)
 
 
 def git_pull(repo_folder):
+    logger.info("executing pull")
     utils.execute_command_string("git pull", repo_folder)
 
 
 def git_push(repo_folder):
-    print("push the data to the repository.")
+    logger.info("push the data to the repository.")
     utils.execute_command_string("git push", repo_folder)
-    print("pushed the data from repository.")
+    logger.info("pushed the data from repository.")
 
 
 def git_file_pre_deleted_state_commit_hash(repo_folder, path):
@@ -40,7 +45,7 @@ def git_file_pre_deleted_state_commit_hash(repo_folder, path):
         if line.startswith("index"):
             if "0000000" not in line.split("..")[1]:
                 return commit_hash
-    print(history)
+    logger.info(history)
     return None
 
 

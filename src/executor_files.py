@@ -1,7 +1,10 @@
+import logging
 import os
 
 from src import decrypt_routine, encrypt_routine, utils, git
 
+logging.config.fileConfig('logging.conf')
+logger = logging.getLogger(__name__)
 
 def handle_group_7(relative_paths, folder_base_local, folder_base_remote):
     for relative_path, md5 in relative_paths.items():
@@ -15,7 +18,7 @@ def handle_group_7(relative_paths, folder_base_local, folder_base_remote):
             if md5_encrypted != md5_decrypted:
                 encrypt_routine.encrypt_single_file(unencrypted_file_path, encrypted_file_path)
         else:
-            print("path is not a file: ", unencrypted_file_path)
+            logger.info("path is not a file: ", unencrypted_file_path)
 
 
 def handle_group_8(relative_paths, folder_base_local, folder_base_remote):
@@ -46,7 +49,7 @@ def handle_group_1(relative_paths, folder_base_local, folder_base_remote):
             os.rename(encrypted_file_path, utils.append_ts_to_path(encrypted_file_path, current_ts))
             encrypt_routine.encrypt_single_file(unencrypted_file_path, encrypted_file_path)
         else:
-            print("files are the same")
+            logger.info("files are the same")
 
 
 def handle_group_3(relative_paths, folder_base_local, folder_base_remote):
@@ -59,13 +62,13 @@ def handle_group_3(relative_paths, folder_base_local, folder_base_remote):
             md5_deleted_file = utils.md5_from_bytes(deleted_file_contents)
             md5_existing_file = utils.md5(path_unencrypted)
             if md5_deleted_file == md5_existing_file:
-                print("removing " + path_unencrypted)
+                logger.info("removing " + path_unencrypted)
                 os.remove(path_unencrypted)
             else:
                 unencrypted_file_path_renamed = utils.append_ts_to_path(path_unencrypted, utils.get_current_unix_ts())
                 os.rename(path_unencrypted, unencrypted_file_path_renamed)
         else:
-            print("path is not a file: " + path_unencrypted)
+            logger.info("path is not a file: " + path_unencrypted)
 
 
 def handle_group_6(relative_paths, folder_base_local, folder_base_remote):
@@ -75,7 +78,7 @@ def handle_group_6(relative_paths, folder_base_local, folder_base_remote):
         if os.path.isfile(encrypted_file_path):
             decrypt_routine.decrypt_single_file(encrypted_file_path, unencrypted_file_path)
         else:
-            print("path is not a file: " + encrypted_file_path)
+            logger.info("path is not a file: " + encrypted_file_path)
 
 
 def handle_group_5(relative_paths, folder_base_local, folder_base_remote):
@@ -85,7 +88,7 @@ def handle_group_5(relative_paths, folder_base_local, folder_base_remote):
         if os.path.isfile(unencrypted_file_path):
             encrypt_routine.encrypt_single_file(unencrypted_file_path, encrypted_file_path)
         else:
-            print("path is not a file: " + unencrypted_file_path)
+            logger.info("path is not a file: " + unencrypted_file_path)
 
 
 def handle_group_2_4(relative_paths, folder_base_local, folder_base_remote):
@@ -99,9 +102,9 @@ def handle_group_2_4(relative_paths, folder_base_local, folder_base_remote):
             if md5_encrypted == md5_decrypted:
                 os.remove(encrypted_file_path)
             else:
-                print("writing conflicted file to local folder")
+                logger.info("writing conflicted file to local folder")
                 current_ts = utils.get_current_unix_ts()
                 utils.write_bytes_to_file(decrypted_file_contents, folder_base_local + "/" + current_ts + "_" + relative_path)
                 os.rename(encrypted_file_path, folder_base_remote + "/" + current_ts + "_" + relative_path + ".gpg")
         else:
-            print(encrypted_file_path + " is not a file")
+            logger.info(encrypted_file_path + " is not a file")

@@ -1,6 +1,10 @@
+import logging
 import os
 
 from src import utils
+
+logging.config.fileConfig('logging.conf')
+logger = logging.getLogger(__name__)
 
 
 def handle_group_5_folders(relative_paths, folder_base_local, folder_base_remote):
@@ -10,7 +14,7 @@ def handle_group_5_folders(relative_paths, folder_base_local, folder_base_remote
             repo_folder_path = folder_base_remote + "/" + relative_path
             utils.create_dirs(repo_folder_path)
         else:
-            print("path is not a dir: " + unencrypted_folder_path)
+            logger.info("path is not a dir: " + unencrypted_folder_path)
 
 
 def handle_group_6_folders(relative_paths, folder_base_local, folder_base_remote):

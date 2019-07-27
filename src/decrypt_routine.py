@@ -1,6 +1,10 @@
 import glob
+import logging
 import os
 import subprocess
+
+logging.config.fileConfig('logging.conf')
+logger = logging.getLogger(__name__)
 
 
 def decrypt_run(folder_encrypted, folder_unencrypted):
@@ -9,7 +13,7 @@ def decrypt_run(folder_encrypted, folder_unencrypted):
     for file in files:
         if os.path.isfile(file) and file.lower().endswith('.gpg'):
             rel_file = decrypt_dir + os.path.relpath(file, folder_encrypted)
-            print(subprocess.check_output(['gpg', '--yes', '--output', rel_file.replace('.gpg', ''), '--verbose', '--decrypt', file]))
+            logger.info(subprocess.check_output(['gpg', '--yes', '--output', rel_file.replace('.gpg', ''), '--verbose', '--decrypt', file]))
 
 
 def decrypt_gpged_files(set_files, target_catalog_path, source_catalog_path):
@@ -30,11 +34,11 @@ def decrypt_single_file(source_path, target_path):
     if os.path.isfile(source_path):
         try:
             output = subprocess.check_output(['gpg', '--yes', '--output', target_path, '--verbose', '--decrypt', source_path])
-            print(output)
+            logger.info(output)
         except subprocess.CalledProcessError as e:
-            print("error decrypting " + source_path + " " + str(e.output))
+            logger.critical("error decrypting " + source_path + " " + str(e.output))
     else:
-        print(source_path + " - is not a file")
+        logger.debug(source_path + " - is not a file")
 
 
 def decrypt_single_file_inmemory_to_str(source_path):
