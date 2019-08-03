@@ -34,6 +34,7 @@ if current_remote_state == previous_remote_state and current_local_state == prev
     utils.stop_application()
 
 # calculate operations
+logger.info("calculating operations - start")
 group_1 = operations_calculator.group_1(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
 group_2_4 = operations_calculator.group_2_4(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
 group_3 = operations_calculator.group_3(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
@@ -41,6 +42,7 @@ group_5 = operations_calculator.group_5(previous_remote_state, current_remote_st
 group_6 = operations_calculator.group_6(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
 group_7 = operations_calculator.group_7(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
 group_8 = operations_calculator.group_8(previous_remote_state, current_remote_state, previous_local_state, current_local_state)
+logger.info("calculating operations - end")
 
 # execute operations for folders
 executor_folders.create_remote_dirs(group_5, folder_local, folder_remote)

@@ -3,6 +3,8 @@ import logging
 import os
 import subprocess
 
+from src import utils
+
 logging.config.fileConfig('logging.conf')
 logger = logging.getLogger(__name__)
 
@@ -53,12 +55,12 @@ def decrypt_single_file_inmemory_to_str(source_path):
         return output
 
 
-def decrypt_single_file_inmemory(source_path):
+def decrypt_single_file_inmemory(source_path, working_dir):
     """
+    :param working_dir:
     :rtype: str
     :param source_path: source file path
     :return: file contents
     """
     if os.path.isfile(source_path):
-        output = subprocess.check_output(['gpg', '--yes', '--verbose', '--decrypt', source_path])
-        return output
+        return utils.execute_command_args_bytes(['gpg', '--yes', '--verbose', '--decrypt', source_path], working_dir)
