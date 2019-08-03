@@ -13,7 +13,7 @@ def handle_group_7(relative_paths, folder_base_local, folder_base_remote):
         md5_decrypted = md5
         unencrypted_file_path = folder_base_local + "/" + relative_path
         encrypted_file_path = folder_base_remote + "/" + relative_path + ".gpg"
-        decrypted_file_contents = decrypt_routine.decrypt_single_file_inmemory(encrypted_file_path)
+        decrypted_file_contents = decrypt_routine.decrypt_single_file_inmemory(encrypted_file_path, folder_base_remote)
         md5_encrypted = utils.md5_from_bytes(decrypted_file_contents)
         if os.path.isfile(unencrypted_file_path):
             if md5_encrypted != md5_decrypted:
@@ -27,7 +27,7 @@ def handle_group_8(relative_paths, folder_base_local, folder_base_remote):
         relative_path = relative_path.lstrip("/")
         md5_decrypted = md5
         encrypted_file_path = folder_base_remote + "/" + relative_path + ".gpg"
-        decrypted_file_contents = decrypt_routine.decrypt_single_file_inmemory(encrypted_file_path)
+        decrypted_file_contents = decrypt_routine.decrypt_single_file_inmemory(encrypted_file_path, folder_base_remote)
         md5_encrypted = utils.md5_from_bytes(decrypted_file_contents)
         if md5_encrypted != md5_decrypted:
             current_ts = utils.get_current_unix_ts()
@@ -42,7 +42,7 @@ def handle_group_1(relative_paths, folder_base_local, folder_base_remote):
         if os.path.isdir(unencrypted_file_path):
             continue
         encrypted_file_path = folder_base_remote + "/" + relative_path + ".gpg"
-        decrypted_file_contents = decrypt_routine.decrypt_single_file_inmemory(encrypted_file_path)
+        decrypted_file_contents = decrypt_routine.decrypt_single_file_inmemory(encrypted_file_path, folder_base_remote)
         md5_encrypted = utils.md5_from_bytes(decrypted_file_contents)
         if md5_encrypted != md5_decrypted:
             current_ts = utils.get_current_unix_ts()
@@ -98,7 +98,7 @@ def handle_group_2_4(relative_paths, folder_base_local, folder_base_remote):
         md5_decrypted = md5
         encrypted_file_path = folder_base_remote + "/" + relative_path + ".gpg"
         if os.path.isfile(encrypted_file_path):
-            decrypted_file_contents = decrypt_routine.decrypt_single_file_inmemory(encrypted_file_path)
+            decrypted_file_contents = decrypt_routine.decrypt_single_file_inmemory(encrypted_file_path, folder_base_remote)
             md5_encrypted = utils.md5_from_bytes(decrypted_file_contents)
             if md5_encrypted == md5_decrypted:
                 os.remove(encrypted_file_path)
