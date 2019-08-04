@@ -1,18 +1,24 @@
 import configparser
 import logging.config
+import sys
 
-from src import utils, git, sync, operations_calculator, executor_folders, executor_files
+from src.script import sync, utils, git, operations_calculator, executor_folders, executor_files
 
-logging.config.fileConfig('logging.conf')
+main_conf = sys.argv[1]
+logging_conf = sys.argv[2]
+
+
+logging.config.fileConfig(logging_conf)
 logger = logging.getLogger(__name__)
+logger.info("--- script launched ---")
 
 config = configparser.ConfigParser()
-config.read('default.conf')
+config.read(main_conf)
 
 folder_local = config["default"]["dir-unencrypted"]
 folder_remote = config["default"]["dir-encrypted"]
 git_repo_url = config["default"]["git-repo-url"]
-state_file = "state.json"
+state_file = "state/state.json"
 
 utils.create_dirs(folder_local)
 repo_just_initialized = utils.create_dirs(folder_remote)

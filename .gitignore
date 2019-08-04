@@ -7,3 +7,6 @@ src/state.json
 src/default.conf
 src/general.log
 src/default.conf
+src/*.log*
+logs/
+state/

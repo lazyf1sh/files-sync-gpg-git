@@ -1,8 +1,16 @@
 import configparser
-import ntpath
+import sys
 import unittest
 import glob
-from src import sync, utils, git
+
+from src.script import sync, utils, git
+
+main_conf = sys.argv[1]
+logging_conf = sys.argv[2]
+
+config = configparser.ConfigParser()
+config.read(main_conf)
+folder_remote = config["default"]["dir-encrypted"]
 
 
 class RootUnitTest(unittest.TestCase):
@@ -25,8 +33,6 @@ class RootUnitTest(unittest.TestCase):
         self.assertEqual(utils.md5(file[0]), "de9e8b4b671fed9da2518ce488dbc138")
         self.assertEqual(md5_from_string, "de9e8b4b671fed9da2518ce488dbc138")
         self.assertEqual(md5_from_bytes, "de9e8b4b671fed9da2518ce488dbc138")
-
-
 
     def test_sync_build_md5_files_map_virtual(self):
         folder_src = "test_data/example-notes01/**"
@@ -74,10 +80,7 @@ class RootUnitTest(unittest.TestCase):
         bts_md5 = utils.md5_from_bytes(bts)
 
     def test_git_file_history(self):
-        config = configparser.ConfigParser()
-        config.read('../default.conf')
 
-        folder_remote = config["default"]["dir-encrypted"]
         git.git_file_pre_deleted_state_commit_hash(folder_remote, "1.txt.gpg")
 
     def test_path_leaf(self):
