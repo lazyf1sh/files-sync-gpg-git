@@ -24,7 +24,7 @@ def handle_group_7(relative_paths, folder_base_local, folder_base_remote):
             else:
                 logger.info("group 7: files are the same - no re-encrypting required: %s", relative_path)
         else:
-            logger.info("group 7: path is not a file: ", relative_path)
+            logger.debug("group 7: path is not a file: ", relative_path)
 
 
 def handle_group_8(relative_paths, folder_base_local, folder_base_remote):
@@ -77,7 +77,7 @@ def handle_group_3(relative_paths, folder_base_local, folder_base_remote):
             md5_deleted_file = utils.md5_from_bytes(deleted_file_contents)
             md5_existing_file = utils.md5(path_unencrypted)
             if md5_deleted_file == md5_existing_file:
-                logger.info("group 3: removing %s" + path_unencrypted)
+                logger.info("group 3: removing %s", path_unencrypted)
                 os.remove(path_unencrypted)
             else:
                 unencrypted_file_path_renamed = utils.append_ts_to_path(path_unencrypted, utils.get_current_unix_ts())
@@ -94,7 +94,7 @@ def handle_group_6(relative_paths, folder_base_local, folder_base_remote):
             logger.debug("group 6: %s", relative_path)
             gpg.decrypt_single_file(encrypted_file_path, unencrypted_file_path)
         else:
-            logger.info("path is not a file: " + encrypted_file_path)
+            logger.debug("path is not a file: " + encrypted_file_path)
 
 
 def handle_group_5(relative_paths, folder_base_local, folder_base_remote):
@@ -125,4 +125,4 @@ def handle_group_2_4(relative_paths, folder_base_local, folder_base_remote):
                 utils.write_bytes_to_file(decrypted_file_contents, folder_base_local + "/" + current_ts + "_" + relative_path)
                 os.rename(encrypted_file_path, folder_base_remote + "/" + current_ts + "_" + relative_path + ".gpg")
         else:
-            logger.info(encrypted_file_path + " is not a file")
+            logger.debug(encrypted_file_path + " is not a file")

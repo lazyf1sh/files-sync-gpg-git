@@ -7,6 +7,13 @@ from src.script import utils
 logger = logging.getLogger(__name__)
 
 
+def git_ping(repo_folder, remote_repo_url):
+    logger.info("git_ping - start")
+    result = utils.execute_command_string("git ls-remote -h " + remote_repo_url, repo_folder)
+    logger.info("git_ping - result: %s", result)
+    return "not found" not in result
+
+
 def git_status(repo_folder):
     result = utils.execute_command_string('git status', repo_folder)
     logger.info("git_status - result: %s", result)
