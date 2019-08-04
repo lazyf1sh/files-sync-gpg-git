@@ -9,13 +9,18 @@ logger = logging.getLogger(__name__)
 
 def git_status(repo_folder):
     result = utils.execute_command_string('git status', repo_folder)
+    logger.info("git_status - result: %s", result)
     return result
 
 
-def git_commit_gpg_files(repo_folder):
-    logger.info("git_commit_gpg_files - start")
+def git_add_gpg_files(repo_folder):
     utils.execute_command_string('git add *.gpg', repo_folder)
-    utils.execute_command_string('git commit -m "committed by script"', repo_folder)
+
+
+def git_commit(repo_folder):
+    logger.info("git_commit_gpg_files - start")
+    result = utils.execute_command_string('git commit -m "committed by script"', repo_folder)
+    logger.info("git_commit_gpg_files - result: %s", result)
     logger.info("git_commit_gpg_files - end")
 
 
@@ -28,13 +33,15 @@ def git_clone(repo_folder, git_init_url):
 
 def git_pull(repo_folder):
     logger.info("git_pull - start")
-    utils.execute_command_string("git pull", repo_folder)
+    result = utils.execute_command_string("git pull", repo_folder)
+    logger.info("git_pull - output: %s", result)
     logger.info("git_pull - end")
 
 
 def git_push(repo_folder):
     logger.info("git_push - start")
-    utils.execute_command_string("git push", repo_folder)
+    string = utils.execute_command_string("git push", repo_folder)
+    logger.info("git_push - output: %s\n", string)
     logger.info("git_push - end")
 
 

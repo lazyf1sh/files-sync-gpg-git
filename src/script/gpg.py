@@ -30,7 +30,7 @@ def decrypt_single_file(source_path, target_path):
                 output = subprocess.check_output(args)
                 logger.debug(output)
             except subprocess.CalledProcessError as e:
-                logger.critical("Error decrypting %s Exception: %s", source_path, e)
+                logger.critical("Error decrypting %s\n\nException: %s", source_path, e)
         else:
             logger.error("The file have no gpg extension. that is very strange situation, because in repo must be only .gpg-files: %s", source_path)
     else:
@@ -55,7 +55,8 @@ def decrypt_single_file_inmemory(source_path, working_dir):
 
 def encrypt_single_file(src_path, target_path, working_dir):
     if os.path.isfile(src_path):
-        logging.info("encrypting file: %s", src_path)
+        logger.info("encrypting file: %s", src_path)
+
         args = ['gpg', '--yes']
         if gpg_verbose:
             args.append('--verbose')
@@ -69,4 +70,4 @@ def encrypt_single_file(src_path, target_path, working_dir):
         output = utils.execute_command_args_bytes(args, working_dir)
         logger.info("encrypted file: %s", output)
     else:
-        logger.info(src_path + " - is not a file")
+        logger.error("path is not a file: %s", src_path)

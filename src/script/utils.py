@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 def stop_application(locked_file, lock_file_path):
     locked_file.close()
     os.remove(lock_file_path)
-    logger.info("called stop_application")
+    logger.info("--------------- script finished ---------------")
     sys.exit(0)
 
 
@@ -114,7 +114,7 @@ def execute_command_internal(args, working_dir):
     :param working_dir:
     :return: bytes
     """
-    logging.debug("executing command: %s", args)
+    logger.debug("executing command: %s", args)
     previous_working_dir = os.getcwd()
     os.chdir(working_dir)
     try:
@@ -122,7 +122,8 @@ def execute_command_internal(args, working_dir):
         # logger.debug("Command executed: %s\nExec result: %s\n", args, proc)
         return proc
     except subprocess.CalledProcessError as exc:
-        logger.critical("Critical error. Code: %s \n\n Output: %s", exc.returncode, exc.output)
+        logger.critical("Critical error: Code: %s", exc.returncode)
+        logger.critical("Critical error. Exception: %s", str(exc))
         raise exc
     finally:
         os.chdir(previous_working_dir)
@@ -143,7 +144,7 @@ def execute_command_string(command, working_dir) -> str:
     try:
         return bytes1.decode("UTF-8")
     except Exception as e:
-        logger.critical(e)
+        logger.error(e)
         raise Exception("Error executing command")
 
 

@@ -1,4 +1,4 @@
-# Current development status: work in progress. Script is unstable.
+# Current development status: alpha test. Win10 supported only
 This python script automatically encrypts and synchronizes file on a filesystem. Синхронизация двустороняя - локальные заметки закачиваются в репозиторий, репозиторные заметки скачиваются в локальные
 
 # System requirements
@@ -12,15 +12,11 @@ This python script automatically encrypts and synchronizes file on a filesystem.
 - no external libs
 - only changed files are handled
 
-# Roadmap
-- viewing file history based on git repo
-- viewing deleted files based on git repo
-- desktop / mobile frontend to prevent having unencrypted the notes at the filesystem. Frontend just runs python script.
-- 
+# Caveats
+- To enable support of cyrillic characters, do the following: Region Settings > Additional date, time & regional settings > change date, time or number formats > administrative > change system locale > Beta: Use unicode UTF-8 for worldwide language support > Enable checkbox
 
 # Warning
 Локальные заметки хранятся в незашифрованном виде. Если кто-то получит доступ к вашему устройству, на котором хранятся данные, заметки будут скомпрометированы.
-
 
 # Как работает
 - Первичная синхронизация выполняется, если отсутствует каталог .git в remote директории
@@ -75,6 +71,12 @@ This python script automatically encrypts and synchronizes file on a filesystem.
 - [] коммитятся только те файлы, которые имеют расширение .gpg
 - [] При конфликте, конфликтующая заметка переименовывается и коммитятся обе заметки 
 - [] Если в репозиторий подложить незашифрованный файл, то при первой синхронизации файл зашифруется и удалится с сервера
+
+# Roadmap
+- viewing file history based on git repo
+- viewing deleted files based on git repo
+- desktop / mobile frontend to prevent having unencrypted the notes at the filesystem. Frontend just runs python script.
+- 
 
 # troubleshooting
 ```
