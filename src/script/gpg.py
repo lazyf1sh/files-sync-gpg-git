@@ -22,7 +22,8 @@ def decrypt_single_file(source_path, target_path):
         if source_path.lower().endswith('.gpg'):
             try:
                 args = ['gpg', '--yes', '--output', target_path]
-                args.append('--verbose')
+                if gpg_verbose:
+                    args.append('--verbose')
                 args.append('--decrypt')
                 args.append(source_path)
 
