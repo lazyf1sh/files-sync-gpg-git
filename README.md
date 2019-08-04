@@ -12,6 +12,8 @@ This python script automatically encrypts and synchronizes file on a filesystem.
 - no external libs
 - only changed files are handled
 
+# First run
+
 # Caveats
 - To enable support of cyrillic characters, do the following: Region Settings > Additional date, time & regional settings > change date, time or number formats > administrative > change system locale > Beta: Use unicode UTF-8 for worldwide language support > Enable checkbox
 
@@ -22,7 +24,9 @@ This python script automatically encrypts and synchronizes file on a filesystem.
 - Первичная синхронизация выполняется, если отсутствует каталог .git в remote директории
 - File unique identifier is file path
 - No dates are used to resolve conflicts
-- Only file content and it's versions is used to resolve conflicts:wq
+- Only file content and it's versions is used to resolve conflicts
+- Scripts runs only if remote repo is available
+- 
 
 # Ограничения
 - Звёздочки в именах файлах не поддерживаются и будут убраны
@@ -33,7 +37,7 @@ This python script automatically encrypts and synchronizes file on a filesystem.
 - [] Программа выполняется если установлена версия git не ниже той что была у меня на момент разработки
 - [] Программа выполняется если установлена версия gpg не ниже той что была у меня на момент разработки
 - [] Программа выполняется если есть права на запись и удаление файлов в оба каталога
-- [] делать коммит если доступен репозиторий (скачивать какую-нибудь инфу с удаленного репозитория)
+
 - [] делать коммит только после успешного pull
 - [] коммитятся все файлы, кроме тех, которые имеют расширение .gpg
 - [] Если в репозиторий подложить незашифрованный файл, то при первой синхронизации файл зашифруется и удалится с сервера

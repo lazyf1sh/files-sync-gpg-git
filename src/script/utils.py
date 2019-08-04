@@ -14,7 +14,7 @@ import time
 logger = logging.getLogger(__name__)
 
 
-def stop_application(locked_file, lock_file_path):
+def stop_script(locked_file, lock_file_path):
     locked_file.close()
     os.remove(lock_file_path)
     logger.info("--------------- script finished ---------------")
