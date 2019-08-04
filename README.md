@@ -9,7 +9,8 @@ This python script automatically encrypts and synchronizes file on a filesystem.
 - OS Windows
 
 # Current features
-- only changed files are committed
+- no external libs
+- only changed files are handled
 
 # Roadmap
 - viewing file history based on git repo

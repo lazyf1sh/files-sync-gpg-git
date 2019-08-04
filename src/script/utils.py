@@ -14,8 +14,10 @@ import time
 logger = logging.getLogger(__name__)
 
 
-def stop_application():
-    logger.info("called stop_application\n")
+def stop_application(locked_file, lock_file_path):
+    locked_file.close()
+    os.remove(lock_file_path)
+    logger.info("called stop_application")
     sys.exit(0)
 
 
