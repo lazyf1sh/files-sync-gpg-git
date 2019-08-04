@@ -6,6 +6,7 @@ This python script automatically encrypts and synchronizes file on a filesystem.
 - git installed (start > cmd > git --version)
 - gpg installed (start > cmd > gpg --version)
 - gpg key is generated (gpg --gen-key)
+- OS Windows
 
 # Current features
 - only changed files are committed
