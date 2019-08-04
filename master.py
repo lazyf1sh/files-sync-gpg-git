@@ -18,7 +18,7 @@ logging_conf = sys.argv[2]
 
 logging.config.fileConfig(logging_conf)
 logger = logging.getLogger(__name__)
-logger.info("--- script launched ---")
+
 
 config = configparser.ConfigParser()
 config.read(main_conf)
@@ -27,6 +27,12 @@ folder_local = config["default"]["dir-unencrypted"]
 folder_remote = config["default"]["dir-encrypted"]
 git_repo_url = config["default"]["git-repo-url"]
 state_file = "state/state.json"
+
+logger.info("state file: %s", state_file)
+logger.info("git_repo_url: %s", git_repo_url)
+logger.info("folder_remote: %s", folder_remote)
+logger.info("folder_local: %s", folder_local)
+logger.info("--------------- script launched ---------------")
 
 utils.create_dirs(folder_local)
 repo_just_initialized = utils.create_dirs(folder_remote)
@@ -79,7 +85,9 @@ executor_folders.remove_remote_dirs(group_3, folder_remote)
 
 status_string = git.git_status(folder_remote)
 if "nothing to commit" not in status_string:
-    git.git_commit_gpg_files(folder_remote)
+    git.git_add_gpg_files(folder_remote)
+    git.git_status(folder_remote)
+    git.git_commit(folder_remote)
     git.git_push(folder_remote)
 else:
     logger.info(status_string)
