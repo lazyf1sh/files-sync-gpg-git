@@ -25,7 +25,7 @@ repo_just_initialized = utils.create_dirs(folder_remote)
 previous_remote_state = sync.calculate_state_without_gpg_ext(folder_remote)
 
 if repo_just_initialized:
-    logger.info("Created new repository dir.")
+    logger.info("Created new repository dir. Cloning repo")
     git.git_clone(folder_remote, git_repo_url)
 else:
     git.git_pull(folder_remote)
