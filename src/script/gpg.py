@@ -67,7 +67,7 @@ def encrypt_single_file(src_path, target_path, working_dir):
         args.append(recipient)
         args.append(src_path)
 
-        output = utils.execute_command_args_bytes(args, working_dir)
-        logger.info("encrypted file: %s", output)
+        utils.execute_command_args_bytes(args, working_dir)
+        logger.info("encrypted file: %s", src_path)
     else:
         logger.error("path is not a file: %s", src_path)

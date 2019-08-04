@@ -88,5 +88,5 @@ def replace_last(source_string, replace_what, replace_with):
     return head + replace_with + tail
 
 
-def save_current_state(state_file, current_local_state):
+def save_state(state_file, current_local_state):
     utils.dict_to_json(state_file, current_local_state)
