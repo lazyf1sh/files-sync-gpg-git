@@ -7,6 +7,14 @@ from src.script import utils
 logger = logging.getLogger(__name__)
 
 
+def git_current_commit(repo_folder):
+    logger.info("git_current_commit - start")
+    result = utils.execute_command_string("git rev-parse --verify HEAD", repo_folder)
+    result = result.replace("\n", "")
+    logger.info("git_current_commit - result: ", result)
+    return result
+
+
 def git_ping(repo_folder, remote_repo_url):
     logger.info("git_ping - start")
     result = utils.execute_command_string("git ls-remote -h " + remote_repo_url, repo_folder)

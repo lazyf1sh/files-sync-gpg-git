@@ -25,17 +25,16 @@ if os.path.exists(lock_file_path) and os.path.isfile(lock_file_path):
     logger.critical("Previous run was not successful")
     previous_run_success = False
 
-f = open(lock_file_path, "w+")
-
-
 logger.info("state file: %s", state_file)
 logger.info("git_repo_url: %s", git_repo_url)
 logger.info("folder_remote: %s", folder_remote)
 logger.info("folder_local: %s", folder_local)
 logger.info("--------------- script launched ---------------")
 
-ping = git.git_ping(folder_remote, git_repo_url)
-if not ping:
+f = open(lock_file_path, "w+")
+
+ping_successful = git.git_ping(folder_remote, git_repo_url)
+if not ping_successful:
     utils.stop_script(f, lock_file_path)
 
 utils.create_dirs(folder_local)
@@ -93,6 +92,7 @@ if "nothing to commit" not in status_string:
     git.git_status(folder_remote)
     git.git_commit(folder_remote)
     git.git_push(folder_remote)
+    commit = git.git_current_commit(folder_remote)
 else:
     logger.info(status_string)
 
