@@ -19,32 +19,40 @@ state_file = "state/state.json"
 logging.config.fileConfig(logging_conf)
 logger = logging.getLogger(__name__)
 
+logger.info("--------------- script launched ---------------")
+
 lock_file_path = "state/lock"
 previous_run_success = True
 if os.path.exists(lock_file_path) and os.path.isfile(lock_file_path):
     logger.critical("Previous run was not successful")
     previous_run_success = False
 
+f = open(lock_file_path, "w+")
+
+if folder_local == folder_remote:
+    logger.critical("Customizing error: repo folder and working folders cannot point to the same location")
+    utils.stop_script(f, lock_file_path)
+
 logger.info("state file: %s", state_file)
 logger.info("git_repo_url: %s", git_repo_url)
 logger.info("folder_remote: %s", folder_remote)
 logger.info("folder_local: %s", folder_local)
-logger.info("--------------- script launched ---------------")
 
-f = open(lock_file_path, "w+")
+utils.create_dirs(folder_local)
+repo_just_initialized = utils.create_dirs(folder_remote)
 
 ping_successful = git.git_ping(folder_remote, git_repo_url)
 if not ping_successful:
     utils.stop_script(f, lock_file_path)
 
-utils.create_dirs(folder_local)
-repo_just_initialized = utils.create_dirs(folder_remote)
 previous_remote_state = sync.calculate_state_without_gpg_ext(folder_remote)
 
 if repo_just_initialized:
     logger.info("Created new repository dir. Cloning repo")
+    sync.save_state(state_file, {})
     git.git_clone(folder_remote, git_repo_url)
 else:
+    # check git repo initialized
     git.git_pull(folder_remote)
 
 current_remote_state = sync.calculate_state_without_gpg_ext(folder_remote)
@@ -96,5 +104,5 @@ if "nothing to commit" not in status_string:
 else:
     logger.info(status_string)
 
-sync.save_current_state(state_file, current_local_state)
+sync.save_state(state_file, current_local_state)
 utils.stop_script(f, lock_file_path)

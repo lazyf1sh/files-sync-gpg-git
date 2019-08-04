@@ -10,7 +10,6 @@ import subprocess
 import sys
 import time
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -105,7 +104,6 @@ def remove_files(paths, src_folder, target_folder):
 
 def execute_command_args_bytes(args, working_dir):
     return execute_command_internal(args, working_dir)
-
 
 def execute_command_internal(args, working_dir):
     """
