@@ -1,12 +1,20 @@
 import configparser
 import logging.config
+import os
 import sys
 
 from src.script import sync, utils, git, operations_calculator, executor_folders, executor_files
 
+lock_file_path = "state/lock"
+previous_run_success = True
+
+if os.path.exists(lock_file_path) and  os.path.isfile(lock_file_path):
+    previous_run_success = False
+
+f = open(lock_file_path, "w+")
+
 main_conf = sys.argv[1]
 logging_conf = sys.argv[2]
-
 
 logging.config.fileConfig(logging_conf)
 logger = logging.getLogger(__name__)
@@ -37,7 +45,7 @@ previous_local_state = utils.read_json_dict_from_file(state_file)
 
 if current_remote_state == previous_remote_state and current_local_state == previous_local_state:
     logger.info("states are the same")
-    utils.stop_application()
+    utils.stop_application(f, lock_file_path)
 
 # calculate operations
 logger.info("calculating operations - start")
@@ -60,7 +68,8 @@ executor_files.handle_group_3(group_3, folder_local, folder_remote)  # remote de
 executor_files.handle_group_2_4(group_2_4, folder_local, folder_remote)  # local deletion
 executor_files.handle_group_6(group_6, folder_local, folder_remote)  # not existed local
 executor_files.handle_group_5(group_5, folder_local, folder_remote)  # not existed remote
-executor_files.handle_group_1(group_1, folder_local, folder_remote)  # checking conflicts through existing files. place for optimizations
+if not previous_run_success:
+    executor_files.handle_group_1(group_1, folder_local, folder_remote)  # checking conflicts through existing files. place for optimizations
 executor_files.handle_group_7(group_7, folder_local, folder_remote)  # modified local, not modified remote
 executor_files.handle_group_8(group_8, folder_local, folder_remote)  # modified remote, not modified local
 
@@ -76,3 +85,5 @@ else:
     logger.info(status_string)
 
 sync.save_current_state(state_file, current_local_state)
+utils.stop_application(f, lock_file_path)
+
