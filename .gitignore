@@ -9,3 +9,4 @@ src/general.log
 src/default.conf
 src/*.log*
 state/
+logs/
