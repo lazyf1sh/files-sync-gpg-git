@@ -6,6 +6,10 @@ import sys
 
 from src.script import utils
 
+if len(sys.argv) < 2:
+    print("missing arguments")
+    sys.exit(1)
+
 logger = logging.getLogger(__name__)
 
 main_conf = sys.argv[1]
@@ -15,6 +19,21 @@ config.read(main_conf)
 
 gpg_verbose = config["default"].getboolean('gpg-verbose')
 recipient = config["default"]["gpg-recipient"]
+
+
+def gpg_version(working_dir):
+    try:
+        args = ['gpg', '--version']
+        output = subprocess.check_output(args)
+        args_bytes = utils.execute_command_args(args, working_dir)
+        gpg_lines = args_bytes.split("\n")
+
+        if len(gpg_lines) > 1:
+            logger.info(gpg_lines[0])
+            return True
+    except subprocess.CalledProcessError as e:
+        logger.critical("error getting gpg version", e)
+    return False
 
 
 def decrypt_single_file(source_path, target_path):
@@ -50,7 +69,10 @@ def decrypt_single_file_inmemory(source_path, working_dir):
             args.append('--verbose')
         args.append('--decrypt')
         args.append(source_path)
-        return utils.execute_command_args_bytes(args, working_dir)
+        args_bytes = utils.execute_command_args_bytes(args, working_dir)
+        if args_bytes is None:
+            logger.critical("None is received for %s", source_path)
+        return args_bytes
 
 
 def encrypt_single_file(src_path, target_path, working_dir):

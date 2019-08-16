@@ -5,7 +5,6 @@ from src.script import utils
 from src.script import gpg
 from src.script import git
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -37,7 +36,7 @@ def handle_group_8(relative_paths, folder_base_local, folder_base_remote):
             md5_encrypted = utils.md5_from_bytes(decrypted_file_contents)
             if md5_encrypted != md5_decrypted:
                 logger.info("group 8: unpacking file: %s", relative_path)
-                utils.write_bytes_to_file(decrypted_file_contents, folder_base_local + "/" + relative_path)
+                utils.write_bytes_to_file_create_folder(decrypted_file_contents, folder_base_local + "/" + relative_path)
             else:
                 logger.debug("group 8: files are the same - no action required: %s", relative_path)
         else:
@@ -59,7 +58,7 @@ def handle_group_1(relative_paths, folder_base_local, folder_base_remote):
         if md5_encrypted != md5_decrypted:
             logger.info("group 1: handling conflict: %s", relative_path)
             current_ts = utils.get_current_unix_ts()
-            utils.write_bytes_to_file(decrypted_file_contents, utils.append_ts_to_path(unencrypted_file_path, current_ts))
+            utils.write_bytes_to_file_create_folder(decrypted_file_contents, utils.append_ts_to_path(unencrypted_file_path, current_ts))
             os.rename(encrypted_file_path, utils.append_ts_to_path(encrypted_file_path, current_ts))
             gpg.encrypt_single_file(unencrypted_file_path, encrypted_file_path, folder_base_remote)
         else:
@@ -122,7 +121,12 @@ def handle_group_2_4(relative_paths, folder_base_local, folder_base_remote):
             else:
                 logger.info("writing conflicted file to local folder: %s", relative_path)
                 current_ts = utils.get_current_unix_ts()
-                utils.write_bytes_to_file(decrypted_file_contents, folder_base_local + "/" + current_ts + "_" + relative_path)
-                os.rename(encrypted_file_path, folder_base_remote + "/" + current_ts + "_" + relative_path + ".gpg")
+                decrypt_path = utils.append_ts_to_path(folder_base_local + "/" + relative_path, current_ts)
+                remote_rename_path = utils.append_ts_to_path(folder_base_remote + "/" + relative_path + ".gpg", current_ts)
+
+                logger.info("decrypt path: %s", decrypt_path)
+                logger.info("remote rename path: %s", remote_rename_path)
+                utils.write_bytes_to_file_create_folder(decrypted_file_contents, decrypt_path)
+                os.rename(encrypted_file_path, remote_rename_path)
         else:
             logger.debug(encrypted_file_path + " is not a file")

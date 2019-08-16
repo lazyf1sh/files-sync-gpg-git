@@ -13,11 +13,15 @@ import time
 logger = logging.getLogger(__name__)
 
 
+def stop_script_no_args():
+    logger.info("--------------- script finished ---------------")
+    sys.exit(0)
+
+
 def stop_script(locked_file, lock_file_path):
     locked_file.close()
     os.remove(lock_file_path)
-    logger.info("--------------- script finished ---------------")
-    sys.exit(0)
+    stop_script()
 
 
 def read_json_dict_from_file(filename):
@@ -78,6 +82,10 @@ def create_enc_dir_structure(files_enencrypted, src_folder, target_folder):
                     os.makedirs(abs_output_path)
 
 
+def calculate_conflicted_path(head, tail, current_ts):
+    return head + "/" + "!" + current_ts + "_" + tail
+
+
 def calc_path_leaf(path):
     head, tail = ntpath.split(path)
     return tail or ntpath.basename(head)
@@ -91,7 +99,7 @@ def calc_path_head(path):
 def append_ts_to_path(path, current_ts):
     leaf = calc_path_leaf(path)
     head = calc_path_head(path)
-    return head + "/" + current_ts + "_" + leaf
+    return head + "/" + "!" + current_ts + "_" + leaf
 
 
 def remove_files(paths, src_folder, target_folder):
@@ -104,6 +112,7 @@ def remove_files(paths, src_folder, target_folder):
 
 def execute_command_args_bytes(args, working_dir):
     return execute_command_internal(args, working_dir)
+
 
 def execute_command_internal(args, working_dir):
     """
@@ -150,7 +159,17 @@ def get_current_unix_ts():
     return str(time.time()).split('.')[0]
 
 
+def write_bytes_to_file_create_folder(byte_arr, output_path):
+    head = calc_path_head(output_path)
+    created = create_dirs(head)
+    if created:
+        logger.info("Created folder: %s\nfor file: %s", head, output_path)
+    write_bytes_to_file(byte_arr, output_path)
+
+
 def write_bytes_to_file(byte_arr, output_path):
+    if byte_arr is None:
+        logger.critical("attempt to write None for %s", output_path)
     f = open(output_path, 'wb')
     f.write(byte_arr)
     f.close()
