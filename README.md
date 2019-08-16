@@ -1,6 +1,22 @@
 # Current development status: alpha test. Win10 supported only
 This python script automatically encrypts and synchronizes file on a filesystem. Синхронизация двустороняя - локальные заметки закачиваются в репозиторий, репозиторные заметки скачиваются в локальные
 
+# About
+This script is a very geeky way to synchronize your files between devices. It uses git as a remote storage and gpg as an encrypt engine. First installation is very painful, because it have to have gpg keys generated, backed up. Git repo should also be configured. Android sync is supported by installing Termux emulator. 
+
+# Installation
+- clone script
+- install latest version of CLI gnupg
+- generate gpg keys and backup them to secure place
+- install latest version of CLI git
+- create remote repo and set it to /conf/default.conf
+- 
+
+# Android installation
+- install termux
+- install 
+
+
 # System requirements
 - Python 3 installed
 - git installed (start > cmd > git --version)
