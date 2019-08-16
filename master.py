@@ -3,7 +3,11 @@ import logging.config
 import os
 import sys
 
-from src.script import sync, utils, git, operations_calculator, executor_folders, executor_files
+from src.script import sync, utils, git, operations_calculator, executor_folders, executor_files, gpg
+
+if len(sys.argv) < 2:
+    print("missing arguments")
+    sys.exit(1)
 
 main_conf = sys.argv[1]
 logging_conf = sys.argv[2]
@@ -20,6 +24,13 @@ logging.config.fileConfig(logging_conf)
 logger = logging.getLogger(__name__)
 
 logger.info("--------------- script launched ---------------")
+
+
+gpg_installed = gpg.gpg_version(folder_local)
+if not gpg_installed:
+    logger.critical("gpg is not installed")
+    utils.stop_script_no_args()
+
 
 lock_file_path = "state/lock"
 previous_run_success = True
@@ -49,10 +60,11 @@ previous_remote_state = sync.calculate_state_without_gpg_ext(folder_remote)
 
 if repo_just_initialized:
     logger.info("Created new repository dir. Cloning repo")
+    utils.create_dirs("state")
     sync.save_state(state_file, {})
     git.git_clone(folder_remote, git_repo_url)
 else:
-    # check git repo initialized
+    # check if git repo initialized
     git.git_pull(folder_remote)
 
 current_remote_state = sync.calculate_state_without_gpg_ext(folder_remote)

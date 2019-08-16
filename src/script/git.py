@@ -91,4 +91,5 @@ def git_get_recent_file_contents(repo_folder, path) -> bytes:
         file_contents = utils.execute_command_args_bytes(command, repo_folder)
         return file_contents
     else:
+        logger.critical("platform: %s", sys.platform)
         raise NotImplementedError
