@@ -3,6 +3,7 @@ import logging
 import os
 import subprocess
 import sys
+import tempfile
 
 from src.script import utils
 
@@ -21,16 +22,16 @@ gpg_verbose = config["default"].getboolean('gpg-verbose')
 recipient = config["default"]["gpg-recipient"]
 
 
-def gpg_version(working_dir):
+def gpg_is_available():
     try:
-        args = ['gpg', '--version']
-        output = subprocess.check_output(args)
-        args_bytes = utils.execute_command_args(args, working_dir)
-        gpg_lines = args_bytes.split("\n")
-
-        if len(gpg_lines) > 1:
+        output = utils.execute_command_args(['gpg', '--version'], tempfile.gettempdir())
+        logger.debug("gpg check response: %s", output)
+        gpg_lines = output.split("\n")
+        if len(gpg_lines) > 1 and "GnuPG" in gpg_lines[0]:
             logger.info(gpg_lines[0])
             return True
+        else:
+            logger.critical("gpg is not available")
     except subprocess.CalledProcessError as e:
         logger.critical("error getting gpg version", e)
     return False

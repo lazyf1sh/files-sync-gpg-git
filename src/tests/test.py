@@ -1,16 +1,7 @@
-import configparser
-import sys
-import unittest
 import glob
+import unittest
 
-from src.script import sync, utils, git
-
-main_conf = sys.argv[1]
-logging_conf = sys.argv[2]
-
-config = configparser.ConfigParser()
-config.read(main_conf)
-folder_remote = config["default"]["dir-encrypted"]
+from src.script import sync, utils
 
 
 class RootUnitTest(unittest.TestCase):
@@ -79,9 +70,9 @@ class RootUnitTest(unittest.TestCase):
         bts = bytes([0x13, 0x00, 0x00, 0x00, 0x08, 0x01])
         bts_md5 = utils.md5_from_bytes(bts)
 
-    def test_git_file_history(self):
-
-        git.git_file_pre_deleted_state_commit_hash(folder_remote, "1.txt.gpg")
+    def test_md5_from_bytes_None(self):
+        bts_md5 = utils.md5_from_bytes(None)
+        self.assertEqual(bts_md5, None)
 
     def test_path_leaf(self):
         paths = ['a/b/c/', 'a/b/c', '\\a\\b\\c', '\\a\\b\\c\\', 'a\\b\\c', 'a/b/../../a/b/c/', 'a/b/../../a/b/c', 'C:\\1\\1563602959_3/c', 'C:\\1\\1563602959_3/c/']

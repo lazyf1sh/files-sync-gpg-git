@@ -10,12 +10,13 @@ This script is a very geeky way to synchronize your files between devices. It us
 - generate gpg keys and backup them to secure place
 - install latest version of CLI git
 - create remote repo and set it to /conf/default.conf
-- 
+- gpg --edit-key my@example.com > trust > trust ultimately > yes > save
 
 # Android installation
 - install termux
-- install 
-
+- install gpg: pkg install gpg
+- install git: pkg install git
+- gpg --edit-key my@example.com > trust > trust ultimately > yes > save
 
 # System requirements
 - Python 3 installed

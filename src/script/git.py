@@ -1,6 +1,8 @@
 import logging
 import os
+import subprocess
 import sys
+import tempfile
 
 from src.script import utils
 
@@ -78,18 +80,35 @@ def git_file_pre_deleted_state_commit_hash(repo_folder, path):
     return None
 
 
-def git_get_recent_file_contents(repo_folder, path) -> bytes:
+def git_get_recent_file_data(repo_folder, path) -> bytes:
     """
     Returns previous not deleted file contents
     :param repo_folder:
     :param path:
     """
     commit_hash = git_file_pre_deleted_state_commit_hash(repo_folder, path)
+    logger.info("git_get_recent_file_contents(). Running for platform: %s", sys.platform)
     if "win" in sys.platform:
         cmd = os.environ.get('COMSPEC', 'cmd')
-        command = [cmd, '/c', 'git', 'show', commit_hash + ":" + path, '|gpg', '--decrypt']
+        command = [cmd, '/c', 'git', 'show', "{}:{}".format(commit_hash, path), '|gpg', '--decrypt']
         file_contents = utils.execute_command_args_bytes(command, repo_folder)
-        return file_contents
     else:
-        logger.critical("platform: %s", sys.platform)
-        raise NotImplementedError
+        command = ['git', 'show', "{}:{}".format(commit_hash, path), '|gpg', '--decrypt']
+        file_contents = utils.execute_command_args_bytes(command, repo_folder)
+
+    return file_contents
+
+
+def git_is_available():
+    try:
+        output = utils.execute_command_args(['git', '--version'], tempfile.gettempdir())
+        logger.debug("git check response: %s", output)
+        gpg_lines = output.split("\n")
+        if len(gpg_lines) > 1 and "git version" in gpg_lines[0]:
+            logger.info(gpg_lines[0])
+            return True
+        else:
+            logger.critical("git is not available")
+    except subprocess.CalledProcessError as e:
+        logger.critical("error getting git version", e)
+    return False

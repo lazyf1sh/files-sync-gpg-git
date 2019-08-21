@@ -20,17 +20,25 @@ folder_remote = config["default"]["dir-encrypted"]
 git_repo_url = config["default"]["git-repo-url"]
 state_file = "state/state.json"
 
+utils.create_dirs("state")
+utils.create_dirs("logs")
+
 logging.config.fileConfig(logging_conf)
 logger = logging.getLogger(__name__)
 
 logger.info("--------------- script launched ---------------")
 
-
-gpg_installed = gpg.gpg_version(folder_local)
-if not gpg_installed:
+gpg_is_installed = gpg.gpg_is_available()
+if not gpg_is_installed:
     logger.critical("gpg is not installed")
     utils.stop_script_no_args()
 
+# check gpg has defined key
+
+git_is_installed = git.git_is_available()
+if not git_is_installed:
+    logger.critical("git is not installed")
+    utils.stop_script_no_args()
 
 lock_file_path = "state/lock"
 previous_run_success = True
@@ -60,7 +68,7 @@ previous_remote_state = sync.calculate_state_without_gpg_ext(folder_remote)
 
 if repo_just_initialized:
     logger.info("Created new repository dir. Cloning repo")
-    utils.create_dirs("state")
+
     sync.save_state(state_file, {})
     git.git_clone(folder_remote, git_repo_url)
 else:
