@@ -21,7 +21,7 @@ def stop_script_no_args():
 def stop_script(locked_file, lock_file_path):
     locked_file.close()
     os.remove(lock_file_path)
-    stop_script()
+    stop_script_no_args()
 
 
 def read_json_dict_from_file(filename):
@@ -53,9 +53,9 @@ def create_dirs(catalog_path):
     """
     if not os.path.exists(catalog_path):
         try:
-            logger.debug("creating dir: ", catalog_path)
+            logger.debug("creating dir: %s", catalog_path)
             os.makedirs(catalog_path)
-            logger.debug("dir created: ", catalog_path)
+            logger.debug("dir created: %s", catalog_path)
             return True
         except FileExistsError as e:
             logger.info(e)
@@ -121,7 +121,7 @@ def execute_command_internal(args, working_dir):
     :param working_dir:
     :return: bytes
     """
-    logger.debug("executing command: %s", args)
+    logger.debug("executing command: %s | working dir: %s", args, working_dir)
     previous_working_dir = os.getcwd()
     os.chdir(working_dir)
     try:
@@ -160,22 +160,29 @@ def get_current_unix_ts():
 
 
 def write_bytes_to_file_create_folder(byte_arr, output_path):
+    if byte_arr is None:
+        logger.critical("attempted to write None for %s", output_path)
+        raise Exception("attempted to write None")
     head = calc_path_head(output_path)
     created = create_dirs(head)
     if created:
-        logger.info("Created folder: %s\nfor file: %s", head, output_path)
+        logger.info("Created folder: %s for file: %s", head, output_path)
     write_bytes_to_file(byte_arr, output_path)
 
 
 def write_bytes_to_file(byte_arr, output_path):
     if byte_arr is None:
-        logger.critical("attempt to write None for %s", output_path)
+        logger.critical("attempted to write None for %s", output_path)
+        raise Exception("attempted to write None")
     f = open(output_path, 'wb')
     f.write(byte_arr)
     f.close()
 
 
 def md5(file_path):
+    if file_path is None:
+        logger.critical("md5(file_path): none is received")
+        return None
     hash_md5 = hashlib.md5()
     with open(file_path, "rb") as f:
         i = iter(lambda: f.read(4096), b"")
@@ -185,6 +192,9 @@ def md5(file_path):
 
 
 def md5_from_bytes(my_bytes):
+    if my_bytes is None:
+        logger.critical("md5_from_bytes: none is received")
+        return None
     f = io.BytesIO(my_bytes)
     hash_md5 = hashlib.md5()
 
