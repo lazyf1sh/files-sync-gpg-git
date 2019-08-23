@@ -181,7 +181,7 @@ def write_bytes_to_file(byte_arr, output_path):
 
 def md5(file_path):
     if file_path is None:
-        logger.critical("md5(file_path): none is received")
+        logger.critical("md5(file_path): none is received as agrument")
         return None
     hash_md5 = hashlib.md5()
     with open(file_path, "rb") as f:

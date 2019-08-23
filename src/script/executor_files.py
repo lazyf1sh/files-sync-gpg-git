@@ -94,7 +94,7 @@ def handle_group_6(relative_paths, folder_base_local, folder_base_remote):
         unencrypted_file_path = folder_base_local + "/" + relative_path
         encrypted_file_path = folder_base_remote + "/" + relative_path + ".gpg"
         if os.path.isfile(encrypted_file_path):
-            logger.debug("group 6: %s", relative_path)
+            logger.info("group 6: decrypting %s", relative_path)
             gpg.decrypt_single_file(encrypted_file_path, unencrypted_file_path)
         else:
             logger.debug("path is not a file: " + encrypted_file_path)

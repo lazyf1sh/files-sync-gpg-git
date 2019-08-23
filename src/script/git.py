@@ -95,7 +95,6 @@ def git_get_recent_file_data(repo_folder, path) -> bytes:
     else:
         command = ['git', 'show', "{}:{}".format(commit_hash, path), '|gpg', '--decrypt']
         file_contents = utils.execute_command_args_bytes(command, repo_folder)
-
     return file_contents
 
 

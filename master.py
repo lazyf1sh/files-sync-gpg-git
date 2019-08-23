@@ -15,8 +15,8 @@ logging_conf = sys.argv[2]
 config = configparser.ConfigParser()
 config.read(main_conf)
 
-folder_local = config["default"]["dir-unencrypted"]
-folder_remote = config["default"]["dir-encrypted"]
+dir_unencrypted = config["default"]["dir-unencrypted"]
+dir_encrypted = config["default"]["dir-encrypted"]
 git_repo_url = config["default"]["git-repo-url"]
 state_file = "state/state.json"
 
@@ -40,6 +40,8 @@ if not git_is_installed:
     logger.critical("git is not installed")
     utils.stop_script_no_args()
 
+# git check user / email are customzed
+
 lock_file_path = "state/lock"
 previous_run_success = True
 if os.path.exists(lock_file_path) and os.path.isfile(lock_file_path):
@@ -48,36 +50,38 @@ if os.path.exists(lock_file_path) and os.path.isfile(lock_file_path):
 
 f = open(lock_file_path, "w+")
 
-if folder_local == folder_remote:
+if dir_unencrypted == dir_encrypted:
     logger.critical("Customizing error: repo folder and working folders cannot point to the same location")
     utils.stop_script(f, lock_file_path)
 
 logger.info("state file: %s", state_file)
 logger.info("git_repo_url: %s", git_repo_url)
-logger.info("folder_remote: %s", folder_remote)
-logger.info("folder_local: %s", folder_local)
+logger.info("folder_remote: %s", dir_encrypted)
+logger.info("folder_local: %s", dir_unencrypted)
 
-utils.create_dirs(folder_local)
-repo_just_initialized = utils.create_dirs(folder_remote)
+utils.create_dirs(dir_unencrypted)
+repo_just_initialized = utils.create_dirs(dir_encrypted)
 
-ping_successful = git.git_ping(folder_remote, git_repo_url)
+ping_successful = git.git_ping(dir_encrypted, git_repo_url)
 if not ping_successful:
     utils.stop_script(f, lock_file_path)
 
-previous_remote_state = sync.calculate_state_without_gpg_ext(folder_remote)
+previous_remote_state = sync.calculate_state_without_gpg_ext(dir_encrypted)
 
 if repo_just_initialized:
     logger.info("Created new repository dir. Cloning repo")
-
     sync.save_state(state_file, {})
-    git.git_clone(folder_remote, git_repo_url)
+    # check folder is empty before cloning
+    # check git is not initialized before cloning
+    git.git_clone(dir_encrypted, git_repo_url)
 else:
-    # check if git repo initialized
-    git.git_pull(folder_remote)
+    status_str = git.git_status(dir_encrypted)
+    if "on branch" in status_str.lower():
+        git.git_pull(dir_encrypted)
 
-current_remote_state = sync.calculate_state_without_gpg_ext(folder_remote)
+current_remote_state = sync.calculate_state_without_gpg_ext(dir_encrypted)
 
-current_local_state = sync.calculate_state(folder_local)
+current_local_state = sync.calculate_state(dir_unencrypted)
 previous_local_state = utils.read_json_dict_from_file(state_file)
 
 if current_remote_state == previous_remote_state and current_local_state == previous_local_state:
@@ -96,31 +100,31 @@ group_8 = operations_calculator.group_8(previous_remote_state, current_remote_st
 logger.info("calculating operations - end")
 
 # execute operations for folders
-executor_folders.create_remote_dirs(group_5, folder_local, folder_remote)
-executor_folders.create_remote_dirs(group_1, folder_local, folder_remote)
-executor_folders.create_local_dirs(group_6, folder_local, folder_remote)
+executor_folders.create_remote_dirs(group_5, dir_unencrypted, dir_encrypted)
+executor_folders.create_remote_dirs(group_1, dir_unencrypted, dir_encrypted)
+executor_folders.create_local_dirs(group_6, dir_unencrypted, dir_encrypted)
 
 # execute operations for files
-executor_files.handle_group_3(group_3, folder_local, folder_remote)  # remote deletion
-executor_files.handle_group_2_4(group_2_4, folder_local, folder_remote)  # local deletion
-executor_files.handle_group_6(group_6, folder_local, folder_remote)  # not existed local
-executor_files.handle_group_5(group_5, folder_local, folder_remote)  # not existed remote
+executor_files.handle_group_3(group_3, dir_unencrypted, dir_encrypted)  # remote deletion
+executor_files.handle_group_2_4(group_2_4, dir_unencrypted, dir_encrypted)  # local deletion
+executor_files.handle_group_6(group_6, dir_unencrypted, dir_encrypted)  # not existed local
+executor_files.handle_group_5(group_5, dir_unencrypted, dir_encrypted)  # not existed remote
 if not previous_run_success:
-    executor_files.handle_group_1(group_1, folder_local, folder_remote)  # checking conflicts through existing files. place for optimizations
-executor_files.handle_group_7(group_7, folder_local, folder_remote)  # modified local, not modified remote
-executor_files.handle_group_8(group_8, folder_local, folder_remote)  # modified remote, not modified local
+    executor_files.handle_group_1(group_1, dir_unencrypted, dir_encrypted)  # checking conflicts through existing files. place for optimizations
+executor_files.handle_group_7(group_7, dir_unencrypted, dir_encrypted)  # modified local, not modified remote
+executor_files.handle_group_8(group_8, dir_unencrypted, dir_encrypted)  # modified remote, not modified local
 
 # execute operations for folders
-executor_folders.remove_remote_dirs(group_2_4, folder_remote)
-executor_folders.remove_local_dirs(group_3, folder_local)
+executor_folders.remove_remote_dirs(group_2_4, dir_encrypted)
+executor_folders.remove_local_dirs(group_3, dir_unencrypted)
 
-status_string = git.git_status(folder_remote)
+status_string = git.git_status(dir_encrypted)
 if "nothing to commit" not in status_string:
-    git.git_add_gpg_files(folder_remote)
-    git.git_status(folder_remote)
-    git.git_commit(folder_remote)
-    git.git_push(folder_remote)
-    commit = git.git_current_commit(folder_remote)
+    git.git_add_gpg_files(dir_encrypted)
+    git.git_status(dir_encrypted)
+    git.git_commit(dir_encrypted)
+    git.git_push(dir_encrypted)
+    commit = git.git_current_commit(dir_encrypted)
 else:
     logger.info(status_string)
 
