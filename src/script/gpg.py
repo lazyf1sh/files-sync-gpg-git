@@ -5,7 +5,7 @@ import subprocess
 import sys
 import tempfile
 
-from src.script import utils
+from src.script import proc_runner
 
 if len(sys.argv) < 2:
     print("missing arguments")
