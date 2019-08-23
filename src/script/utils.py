@@ -4,9 +4,7 @@ import json
 import logging
 import ntpath
 import os
-import shlex
 import shutil
-import subprocess
 import sys
 import time
 
@@ -108,9 +106,6 @@ def remove_files(paths, src_folder, target_folder):
         encrypted_path = target_folder + relPath + ".gpg"
         if os.path.exists(encrypted_path) and os.path.isfile(encrypted_path):
             os.remove(encrypted_path)
-
-
-
 
 
 def get_current_unix_ts():
