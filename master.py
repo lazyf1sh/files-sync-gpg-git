@@ -26,7 +26,7 @@ utils.create_dirs("logs")
 logging.config.fileConfig(logging_conf)
 logger = logging.getLogger(__name__)
 
-logger.info("--------------- script launched ---------------")
+logger.info("--- script launched ---")
 
 gpg_is_installed = gpg.gpg_is_available()
 if not gpg_is_installed:
@@ -40,7 +40,7 @@ if not git_is_installed:
     logger.critical("git is not installed")
     utils.stop_script_no_args()
 
-# git check user / email are customzed
+# git check user / email are customized
 
 lock_file_path = "state/lock"
 previous_run_success = True

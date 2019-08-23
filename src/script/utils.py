@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 def stop_script_no_args():
-    logger.info("--------------- script finished ---------------")
+    logger.info("--- script finished ---")
     sys.exit(0)
 
 

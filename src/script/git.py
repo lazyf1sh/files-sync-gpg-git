@@ -90,6 +90,7 @@ def git_get_recent_file_data(repo_folder, path) -> bytes:
     git_command = ['git', 'show', "{}:{}".format(commit_hash, path)]
     gpg_command = ['gpg', '--decrypt']
     file_contents = proc_runner.run_piped(repo_folder, git_command, gpg_command)
+    logger.info("decrypted contents: %s", file_contents)
     return file_contents
 
 
