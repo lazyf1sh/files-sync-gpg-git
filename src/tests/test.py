@@ -1,7 +1,11 @@
 import glob
+import os
+import subprocess
 import unittest
+from shlex import split
+from subprocess import Popen, PIPE
 
-from src.script import sync, utils
+from src.script import sync, utils, proc_runner
 
 
 class RootUnitTest(unittest.TestCase):
@@ -85,3 +89,6 @@ class RootUnitTest(unittest.TestCase):
         paths = ['a/b/c/', 'a/b/c', '\\a\\b\\c', '\\a\\b\\c\\', 'a\\b\\c', 'a/b/../../a/b/c/', 'a/b/../../a/b/c', 'C:\\1\\1563602959_3/c', 'C:\\1\\1563602959_3/c/']
         for path in paths:
             leaf = utils.append_ts_to_path(path, current_ts)
+
+    def test_31231(self):
+        proc_runner.run_piped('C:\\1\\files-sync-dev-sandbox-enviroment\PC2\encrypted', ['git', 'show', 'f4366b9240a5197113dbc6148f56c9bd257f208e:to_delete1.txt.gpg'], ['gpg', '--decrypt'])

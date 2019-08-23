@@ -4,7 +4,7 @@ import subprocess
 import sys
 import tempfile
 
-from src.script import utils
+from src.script import utils, proc_runner
 
 logger = logging.getLogger(__name__)
 
@@ -89,9 +89,10 @@ def git_get_recent_file_data(repo_folder, path) -> bytes:
     commit_hash = git_file_pre_deleted_state_commit_hash(repo_folder, path)
     logger.info("git_get_recent_file_contents(). Running for platform: %s", sys.platform)
     if "win" in sys.platform:
-        cmd = os.environ.get('COMSPEC', 'cmd')
-        command = [cmd, '/c', 'git', 'show', "{}:{}".format(commit_hash, path), '|gpg', '--decrypt']
-        file_contents = utils.execute_command_args_bytes(command, repo_folder)
+        git_command = ['git', 'show', "{}:{}".format(commit_hash, path)]
+        gpg_command = ['gpg', '--decrypt']
+        file_contents = proc_runner.run_piped(repo_folder, git_command, gpg_command)
+        # file_contents = utils.execute_command_args_bytes(command, repo_folder)
     else:
         command = ['git', 'show', "{}:{}".format(commit_hash, path), '|gpg', '--decrypt']
         file_contents = utils.execute_command_args_bytes(command, repo_folder)
