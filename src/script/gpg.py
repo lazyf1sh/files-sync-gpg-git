@@ -24,7 +24,7 @@ recipient = config["default"]["gpg-recipient"]
 
 def gpg_is_available():
     try:
-        output = utils.execute_command_args(['gpg', '--version'], tempfile.gettempdir())
+        output = proc_runner.execute_command_args(['gpg', '--version'], tempfile.gettempdir())
         logger.debug("gpg check response: %s", output)
         gpg_lines = output.split("\n")
         if len(gpg_lines) > 1 and "GnuPG" in gpg_lines[0]:
@@ -70,7 +70,7 @@ def decrypt_single_file_inmemory(source_path, working_dir):
             args.append('--verbose')
         args.append('--decrypt')
         args.append(source_path)
-        args_bytes = utils.execute_command_args_bytes(args, working_dir)
+        args_bytes = proc_runner.execute_command_args_bytes(args, working_dir)
         if args_bytes is None:
             logger.critical("None is received for %s", source_path)
         return args_bytes
@@ -90,7 +90,7 @@ def encrypt_single_file(src_path, target_path, working_dir):
         args.append(recipient)
         args.append(src_path)
 
-        utils.execute_command_args_bytes(args, working_dir)
+        proc_runner.execute_command_args_bytes(args, working_dir)
         logger.info("encrypted file: %s", src_path)
     else:
         logger.error("path is not a file: %s", src_path)
