@@ -1,4 +1,4 @@
-# Current development status: alpha test. Win10 supported only
+# Current development status: alpha test. Win10 is supported only
 This python script automatically encrypts and synchronizes file on a filesystem. Синхронизация двустороняя - локальные заметки закачиваются в репозиторий, репозиторные заметки скачиваются в локальные
 
 # About
@@ -16,6 +16,9 @@ This script is a very geeky way to synchronize your files between devices. It us
 - install termux
 - install gpg: pkg install gpg
 - install git: pkg install git
+- customize git: git config [--global] user.email "you@example.com"
+- customize git: git config [--global] user.name "Your Name"
+- (optional) customize git: git config credential.helper 'cache --timeout=300'
 - gpg --edit-key my@example.com > trust > trust ultimately > yes > save
 
 # System requirements
