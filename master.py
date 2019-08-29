@@ -11,12 +11,12 @@ if len(sys.argv) < 2:
     sys.exit(1)
 
 
-ls = ['ls']
-grep = ['grep', 'md']
-file_contents = proc_runner.run_piped_shell()
-print("file_contents:")
-print(file_contents)
-sys.exit(0)
+# ls = ['ls']
+# grep = ['grep', 'md']
+# file_contents = proc_runner.run_piped_shell()
+# print("file_contents:")
+# print(file_contents)
+# sys.exit(0)
 
 
 
