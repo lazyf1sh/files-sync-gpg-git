@@ -2,12 +2,21 @@ import configparser
 import logging.config
 import os
 import sys
+import tempfile
 
-from src.script import sync, utils, git, operations_calculator, executor_folders, executor_files, gpg
+from src.script import sync, utils, git, operations_calculator, executor_folders, executor_files, gpg, proc_runner
 
 if len(sys.argv) < 2:
     print("missing arguments")
     sys.exit(1)
+
+
+ls = ['ls']
+grep = ['grep', 'md']
+file_contents = proc_runner.run_piped(tempfile.gettempdir(), ls, grep)
+print(file_contents)
+
+
 
 main_conf = sys.argv[1]
 logging_conf = sys.argv[2]
