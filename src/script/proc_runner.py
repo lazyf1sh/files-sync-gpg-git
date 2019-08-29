@@ -8,10 +8,18 @@ from subprocess import Popen
 logger = logging.getLogger(__name__)
 
 
+def run_piped_shell():
+    cmd = "ls | grep py"
+    ps = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    out = ps.communicate()[0]
+    print("output:")
+    print(out)
+
+
 def run_piped(working_dir, args1, args2):
-    logger.critical("running piped command")
-    logger.critical("executing command 1: %s | working dir: %s", args1, working_dir)
-    logger.critical("executing command 2: %s | working dir: %s", args2, working_dir)
+    logger.info("running piped command")
+    logger.info("executing command 1: %s | working dir: %s", args1, working_dir)
+    logger.info("executing command 2: %s | working dir: %s", args2, working_dir)
     previous_working_dir = os.getcwd()
     try:
         os.chdir(working_dir)

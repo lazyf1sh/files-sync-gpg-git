@@ -13,7 +13,7 @@ if len(sys.argv) < 2:
 
 ls = ['ls']
 grep = ['grep', 'md']
-file_contents = proc_runner.run_piped(tempfile.gettempdir(), ls, grep)
+file_contents = proc_runner.run_piped_shell()
 print("file_contents:")
 print(file_contents)
 sys.exit(0)
