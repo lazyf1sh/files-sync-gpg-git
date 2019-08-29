@@ -17,6 +17,7 @@ def run_piped(working_dir, args1, args2):
         os.chdir(working_dir)
         p1 = Popen(args1, stdout=subprocess.PIPE)
         p2 = Popen(args2, stdin=p1.stdout, stdout=subprocess.PIPE)
+        p1.wait()
 
         out, err = p2.communicate()
 
