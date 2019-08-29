@@ -1,9 +1,5 @@
 import glob
-import os
-import subprocess
 import unittest
-from shlex import split
-from subprocess import Popen, PIPE
 
 from src.script import sync, utils, proc_runner
 

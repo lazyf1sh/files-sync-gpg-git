@@ -79,7 +79,7 @@ def git_file_pre_deleted_state_commit_hash(repo_folder, path):
     return None
 
 
-def git_get_recent_file_data(repo_folder, path) -> bytes:
+def git_get_recent_file_data_piped(repo_folder, path) -> bytes:
     """
     Returns previous not deleted file contents
     :param repo_folder:
