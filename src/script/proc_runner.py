@@ -8,12 +8,12 @@ from subprocess import Popen
 logger = logging.getLogger(__name__)
 
 
-def run_piped_shell():
-    cmd = "ls | grep py"
-    ps = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    out = ps.communicate()[0]
-    print("output:")
-    print(out)
+# def run_piped_shell():
+#     cmd = "ls | grep py"
+#     ps = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+#     out = ps.communicate()[0]
+#     print("output:")
+#     print(out)
 
 
 def run_piped(working_dir, args1, args2):
