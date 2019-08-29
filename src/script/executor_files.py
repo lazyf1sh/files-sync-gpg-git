@@ -76,7 +76,7 @@ def handle_group_3(relative_paths, folder_base_local, folder_base_remote):
         path_encrypted_relative = relative_path + ".gpg"
         if os.path.isfile(path_unencrypted):
             logger.debug("group 3: checking %s", relative_path)
-            deleted_file_contents = git.git_get_recent_file_data(folder_base_remote, path_encrypted_relative)
+            deleted_file_contents = git.git_get_recent_file_data_piped(folder_base_remote, path_encrypted_relative)
             md5_deleted_file = utils.md5_from_bytes(deleted_file_contents)
             md5_existing_file = utils.md5(path_unencrypted)
             if md5_deleted_file == md5_existing_file:
