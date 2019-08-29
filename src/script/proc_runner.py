@@ -9,15 +9,16 @@ logger = logging.getLogger(__name__)
 
 
 def run_piped(working_dir, args1, args2):
-    logger.info("running piped command")
-    logger.info("executing command 1: %s | working dir: %s", args1, working_dir)
-    logger.info("executing command 2: %s | working dir: %s", args2, working_dir)
+    logger.critical("running piped command")
+    logger.critical("executing command 1: %s | working dir: %s", args1, working_dir)
+    logger.critical("executing command 2: %s | working dir: %s", args2, working_dir)
     previous_working_dir = os.getcwd()
     try:
         os.chdir(working_dir)
         p1 = Popen(args1, stdout=subprocess.PIPE)
         p2 = Popen(args2, stdin=p1.stdout, stdout=subprocess.PIPE)
         p1.wait()
+        p2.wait()
 
         out, err = p2.communicate()
 
