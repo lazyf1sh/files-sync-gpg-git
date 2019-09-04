@@ -16,6 +16,25 @@ def git_current_commit(repo_folder):
     return result
 
 
+def dir_is_repository(catalog):
+    logger.info("git_ping - start")
+    try:
+        result = proc_runner.execute_command_args_bytes(['git', 'status'], catalog)
+        if "on branch" in str(result).lower():
+            return True
+    except subprocess.CalledProcessError as exc:
+        if exc.returncode == 128:
+            logger.info("%s is not git repo", catalog)
+    return False
+
+
+def git_init(catalog):
+    logger.info("git_init - start")
+    result = proc_runner.execute_command_string('git init', catalog)
+    logger.info("git_init - result: %s", result)
+    return result
+
+
 def git_ping(repo_folder, remote_repo_url):
     logger.info("git_ping - start")
     result = proc_runner.execute_command_string("git ls-remote -h " + remote_repo_url, repo_folder)
@@ -33,9 +52,13 @@ def git_add_gpg_files(repo_folder):
     proc_runner.execute_command_string('git add *.gpg', repo_folder)
 
 
-def git_commit(repo_folder):
+def git_add_all(repo_folder):
+    proc_runner.execute_command_string('git add .', repo_folder)
+
+
+def git_commit(repo_folder, msg):
     logger.info("git_commit_gpg_files - start")
-    result = proc_runner.execute_command_string('git commit -m "committed by script"', repo_folder)
+    result = proc_runner.execute_command_string('git commit -m "' + msg + '"', repo_folder)
     logger.info("git_commit_gpg_files - result: %s", result)
     logger.info("git_commit_gpg_files - end")
 

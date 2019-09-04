@@ -10,14 +10,12 @@ if len(sys.argv) < 2:
     print("missing arguments")
     sys.exit(1)
 
-
 # ls = ['ls']
 # grep = ['grep', 'md']
 # file_contents = proc_runner.run_piped_shell()
 # print("file_contents:")
 # print(file_contents)
 # sys.exit(0)
-
 
 
 main_conf = sys.argv[1]
@@ -77,6 +75,17 @@ ping_successful = git.git_ping(dir_encrypted, git_repo_url)
 if not ping_successful:
     utils.stop_script(f, lock_file_path)
 
+
+local_is_repo = git.dir_is_repository(dir_unencrypted)
+if not local_is_repo:
+    git.git_init(dir_unencrypted)
+status_string = git.git_status(dir_unencrypted)
+if "nothing to commit" not in status_string:
+    git.git_add_all(dir_unencrypted)
+    git.git_status(dir_unencrypted)
+    git.git_commit(dir_unencrypted, "Before synchronizing")
+
+
 previous_remote_state = sync.calculate_state_without_gpg_ext(dir_encrypted)
 
 if repo_just_initialized:
@@ -133,11 +142,17 @@ status_string = git.git_status(dir_encrypted)
 if "nothing to commit" not in status_string:
     git.git_add_gpg_files(dir_encrypted)
     git.git_status(dir_encrypted)
-    git.git_commit(dir_encrypted)
+    git.git_commit(dir_encrypted, "Committed by script")
     git.git_push(dir_encrypted)
     commit = git.git_current_commit(dir_encrypted)
 else:
     logger.info(status_string)
+
+status_string = git.git_status(dir_unencrypted)
+if "nothing to commit" not in status_string:
+    git.git_add_all(dir_unencrypted)
+    git.git_status(dir_unencrypted)
+    git.git_commit(dir_unencrypted, "After synchronizing")
 
 sync.save_state(state_file, current_local_state)
 utils.stop_script(f, lock_file_path)
