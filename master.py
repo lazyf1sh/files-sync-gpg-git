@@ -57,7 +57,6 @@ if os.path.exists(lock_file_path) and os.path.isfile(lock_file_path):
     logger.critical("Previous run was not successful")
     previous_run_success = False
 
-f = open(lock_file_path, "w+")
 
 if dir_unencrypted == dir_encrypted:
     logger.critical("Customizing error: repo folder and working folders cannot point to the same location")
@@ -73,8 +72,9 @@ repo_just_initialized = utils.create_dirs(dir_encrypted)
 
 ping_successful = git.git_ping(dir_encrypted, git_repo_url)
 if not ping_successful:
-    utils.stop_script(f, lock_file_path)
+    utils.stop_script_no_args()
 
+f = open(lock_file_path, "w+")
 
 local_is_repo = git.dir_is_repository(dir_unencrypted)
 if not local_is_repo:
