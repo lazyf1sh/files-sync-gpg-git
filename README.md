@@ -1,11 +1,35 @@
 # Current development status: alpha test. Win10 is supported only
+
 This python script automatically encrypts and synchronizes file on a filesystem. Синхронизация двустороняя - локальные заметки закачиваются в репозиторий, репозиторные заметки скачиваются в локальные
 
 # About
+
 This script is a very geeky way to synchronize your files between devices. It uses git as a remote storage and gpg as an encrypt engine. First installation is very painful, because it have to have gpg keys generated, backed up. Git repo should also be configured. Android sync is supported by installing Termux emulator. 
 
+# Features
+
+- No external libraries.
+- Only changed files are handled.
+- Encryption.
+- Versioning with git.
+
+# Encryption
+
+- Encryption is done by delegating call to gpg tool.
+- Files are encrypted locally, placed to a git repo and then committed
+- Local files are stored with no encryption. If somebody gets access to the local device, files will be compromised.
+
+# System requirements
+
+- Windows 7/8/10.
+- Python 3 is installed.
+- git installed (start > cmd > git --version).
+- gpg installed (start > cmd > gpg --version).
+- gpg key is generated (gpg --gen-key).
+
 # Installation
-- clone script
+
+- Clone script.
 - install latest version of CLI gnupg
 - generate gpg keys and backup them to secure place
 - install latest version of CLI git
@@ -13,94 +37,45 @@ This script is a very geeky way to synchronize your files between devices. It us
 - gpg --edit-key my@example.com > trust > trust ultimately > yes > save
 
 # Android installation
+
 - install termux
-- install gpg: pkg install gpg
-- install git: pkg install git
+- install gpg on termux: pkg install gpg
+- install git on termux: pkg install git
 - customize git: git config [--global] user.email "you@example.com"
 - customize git: git config [--global] user.name "Your Name"
 - (optional) customize git: git config credential.helper 'cache --timeout=300'
 - gpg --edit-key my@example.com > trust > trust ultimately > yes > save
 
-# System requirements
-- Python 3 installed
-- git installed (start > cmd > git --version)
-- gpg installed (start > cmd > gpg --version)
-- gpg key is generated (gpg --gen-key)
-- OS Windows
-
-# Current features
-- no external libs
-- only changed files are handled
-
-# First run
-
 # Caveats
+
 - To enable support of cyrillic characters, do the following: Region Settings > Additional date, time & regional settings > change date, time or number formats > administrative > change system locale > Beta: Use unicode UTF-8 for worldwide language support > Enable checkbox
 
-# Warning
-Локальные заметки хранятся в незашифрованном виде. Если кто-то получит доступ к вашему устройству, на котором хранятся данные, заметки будут скомпрометированы.
+# Technical aspects
 
-# Как работает
 - Первичная синхронизация выполняется, если отсутствует каталог .git в remote директории
-- File unique identifier is file path
-- No dates are used to resolve conflicts
-- Only file content and it's versions is used to resolve conflicts
-- Scripts runs only if remote repo is available
-- 
+- File unique identifier is file path.
+- Modification or creation dates from filesystem metadata are not used in the script.
+- Only file content and it's versions is used to resolve conflicts.
+- Script runs only if remote repo is available.
 
-# Ограничения
-- Звёздочки в именах файлах не поддерживаются и будут убраны
+# Limitations
 
-# Roadmap
-- [+] Files that have different contents only are objects to operations
-- [] Синхронизация двустороняя - локальные заметки закачиваются в репозиторий, репозиторные заметки скачиваются в локальные
-- [] Программа выполняется если установлена версия git не ниже той что была у меня на момент разработки
-- [] Программа выполняется если установлена версия gpg не ниже той что была у меня на момент разработки
-- [] Программа выполняется если есть права на запись и удаление файлов в оба каталога
+- Asterisks in the file names are not supported.
 
-- [] делать коммит только после успешного pull
-- [] коммитятся все файлы, кроме тех, которые имеют расширение .gpg
-- [] Если в репозиторий подложить незашифрованный файл, то при первой синхронизации файл зашифруется и удалится с сервера
-- [] Если файл уже имеет расширение gpg, он будет зашифрован второй раз и будет иметь расширение myfile.txt.gpg.gpg
-
+# FAQ
+- Если файл уже имеет расширение gpg, он будет зашифрован второй раз и будет иметь расширение myfile.txt.gpg.gpg
 
 # Конфликтующие заметки
+
 - Conflict resolve strategy: conflicted note from remote repo is renamed, copied to local catalog. Then both files are commited.
 - Конфликт заметок сведен к минимуму, поскольку коммитятся только измененные файлы.
 - Конфликтующий локальный файл переименовывается в имя_CURRENT_TIMESTAMP
 - Conflicting file / folder with the same names: handled by 
 
-# Шифрование
-- шифрование выполнено путем делегирования задачи команде gpg 
-- файлы шифруются на локальной машине, кладутся в папку с гит-репозиторием коммитятся
-- 
-
 ## Конфликтующие заметки
 Конфликтующая заметка - это файл, который при копировании на другую сторону встречает такой же файл.
-- Конфликт заметок сведен к минимуму, поскольку коммитятся только измененные файлы.
 - Конфликтующий локальный файл переименовывается в %FILENAME%_CURRENT_TIMESTAMP
-
-### Точки возникновения конфликтов
-- Склонировал репозиторий, а файл в НЕрепозитории конфликтует с тем что находится в склонированном репозитории
-
-
-# Programming todos
-- remove leading slash from state tree element
-- get rid of gpg extension in remote repo
-- [] Программа выполняется если установлена версия gpg не ниже той что была у меня на момент разработки
-- [] Программа выполняется если установлена версия git не ниже той что была у меня на момент разработки
-- [] Программа выполняется если есть права на запись и удаление файлов в оба каталога
-- [] делать коммит если доступен репозиторий (скачивать какую-нибудь инфу с удаленного репозитория)
-- [] делать коммит только после успешного pull
-- [] коммитятся только те файлы, которые имеют расширение .gpg
-- [] При конфликте, конфликтующая заметка переименовывается и коммитятся обе заметки 
-- [] Если в репозиторий подложить незашифрованный файл, то при первой синхронизации файл зашифруется и удалится с сервера
-
-# Roadmap
-- viewing file history based on git repo
-- viewing deleted files based on git repo
-- desktop / mobile frontend to prevent having unencrypted the notes at the filesystem. Frontend just runs python script.
-- 
+- Точка возникновения конфликта - склонировал репозиторий, а файл в НЕрепозитории конфликтует с тем что находится в склонированном репозитории
 
 # troubleshooting
 ```
