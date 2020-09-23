@@ -1,4 +1,4 @@
-# Current development status: work in progress. Script is unstable.
+# Current development status: development is stopped.
 
 # Roadmap
 - viewing file history based on git repo
