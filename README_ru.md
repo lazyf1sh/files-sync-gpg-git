@@ -1,4 +1,4 @@
-# Current development status: work in progress
+# Current development status: разработка заморожена.
 
 # Roadmap
 - просмотр истории версий файла
